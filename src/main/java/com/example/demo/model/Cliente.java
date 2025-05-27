@@ -12,7 +12,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 
@@ -23,25 +22,21 @@ public class Cliente {
     private Long id;
 
     @Column(nullable = false)
-    @Valid
     @NotBlank(message = "O nome do cliente não pode estar vazio")
     @Pattern(regexp = "^[A-Za-zÀ-ÿ\\s]+$", message = "Nome inválido")
     private String nome;
 
     @Column(nullable = false)
-    @Valid
     @NotBlank(message = "O email do cliente não pode estar vazio")
     @Pattern(regexp = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$", message = "Email inválido")
     private String email;
 
     @Column(nullable = false)
-    @Valid
     @NotBlank(message = "O telefone do cliente não pode estar vazio")
     @Pattern(regexp = "^\\(?(\\d{2})\\)? ?(\\d{4,5}-?\\d{4})$", message = "Telefone inválido")
     private String telefone;
 
     @Column(nullable = false, unique = true)
-    @Valid
     @NotBlank(message = "O CPF do cliente não pode estar vazio")
     @Pattern(regexp = "^(\\d{3}\\.?\\d{3}\\.?\\d{3}-?\\d{2})$", message = "CPF inválido")
     private String cpf;
