@@ -52,6 +52,7 @@ public class Cliente {
     private List<Pedido> pedidos;
 
     public Cliente() {}
+    
     public Cliente(ClienteDTO cliente) {
         this.nome = cliente.getNome();
         this.email = cliente.getEmail();

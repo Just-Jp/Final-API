@@ -44,4 +44,8 @@ public class EnderecoService {
     private EnderecoDTO inserir(Endereco endereco) {
         return new EnderecoDTO(repo.save(endereco));
     }
+
+    public Endereco buscarCep(String cep) {
+        return repo.findByCep(cep).orElse(null);
+    }
 }

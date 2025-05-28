@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.ClienteDTO;
 import com.example.demo.dto.EnderecoDTO;
+import com.example.demo.exception.CpfException;
 import com.example.demo.model.Cliente;
 import com.example.demo.model.Endereco;
 import com.example.demo.repository.ClienteRepository;
@@ -42,5 +44,32 @@ public class ClienteService {
                     cli.setEndereco(new Endereco(novoEndereco));
                     return new ClienteDTO(repo.save(cli));
                 }).orElse(null);
+    }
+
+    public ClienteDTO inserir(ClienteDTO clienteDTO) throws RuntimeException {
+
+        Optional<Cliente> cliente = repo.findByCpf(clienteDTO.getCpf());
+        if (cliente.isPresent()) {
+            throw new CpfException("CPF já cadastrado: " + clienteDTO.getCpf());
+        }
+
+        cliente = repo.findByEmail(clienteDTO.getEmail());
+        if (cliente.isPresent()) {
+            throw new RuntimeException("Email já cadastrado: " + clienteDTO.getEmail());
+        }
+
+        Cliente novoCliente = new Cliente(clienteDTO);
+        Endereco endereco = endServ.buscarCep(clienteDTO.getCep());
+        if (endereco == null) {
+            endServ.buscar(clienteDTO.getCep());
+            endereco = endServ.buscarCep(clienteDTO.getCep());
+        }
+        novoCliente.setEndereco(endereco);
+
+        return new ClienteDTO(repo.save(novoCliente));
+    }
+
+    public Cliente buscarCpf(String cpf) {
+        return repo.findByCpf(cpf).orElse(null);
     }
 }
