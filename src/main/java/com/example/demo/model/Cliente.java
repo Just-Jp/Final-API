@@ -2,6 +2,8 @@ package com.example.demo.model;
 
 import java.util.List;
 
+import com.example.demo.dto.ClienteDTO;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -48,6 +50,14 @@ public class Cliente {
     @Column
     @OneToMany(mappedBy = "cliente")
     private List<Pedido> pedidos;
+
+    public Cliente() {}
+    public Cliente(ClienteDTO cliente) {
+        this.nome = cliente.getNome();
+        this.email = cliente.getEmail();
+        this.telefone = cliente.getTelefone();
+        this.cpf = cliente.getCpf();
+    }
 
     public Long getId() {
         return id;
