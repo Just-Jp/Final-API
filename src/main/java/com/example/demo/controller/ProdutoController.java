@@ -2,7 +2,7 @@ package com.example.demo.controller;
 
 import java.util.List;
 
-
+import com.example.demo.service.ProdutoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,9 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.model.Produto;
 
-
 import jakarta.validation.Valid;
-
 
 @RestController
 @RequestMapping("/produtos")
@@ -34,8 +32,7 @@ public class ProdutoController {
         Produto novoProduto = produtoService.inserir(produto);
         return ResponseEntity.status(HttpStatus.CREATED).body(novoProduto);
     }
-    
-    
+
     @GetMapping
     public ResponseEntity<List<Produto>> listar() {
         return ResponseEntity.ok(produtoService.listar());
@@ -49,8 +46,7 @@ public class ProdutoController {
         }
         return ResponseEntity.notFound().build();
     }
-       
-    
+
     @PutMapping("/{id}")
     public ResponseEntity<Produto> atualizar(@PathVariable Long id, @Valid @RequestBody Produto produto){
         Produto produtoAtualizado = produtoService.atualizar(id, produto);
@@ -69,5 +65,4 @@ public class ProdutoController {
         }
         return ResponseEntity.notFound().build();
     }
-    
 }
