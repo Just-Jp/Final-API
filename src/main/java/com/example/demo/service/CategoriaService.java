@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.example.demo.DTO.CategoriaDTO;
+import com.example.demo.dto.CategoriaDTO;
 import com.example.demo.model.Categoria;
 import com.example.demo.repository.CategoriaRepository;
 

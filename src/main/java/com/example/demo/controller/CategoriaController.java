@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import java.net.URI;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
@@ -11,8 +12,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.example.demo.DTO.CategoriaDTO;
+import com.example.demo.dto.CategoriaDTO;
 import com.example.demo.service.CategoriaService;
 
 import jakarta.validation.Valid;
@@ -40,8 +42,14 @@ public class CategoriaController {
 
     @PostMapping
     public ResponseEntity<CategoriaDTO> criar(@Valid @RequestBody CategoriaDTO dto) {
-        CategoriaDTO novaCategoria = service.salvar(dto);
-        return ResponseEntity.ok(novaCategoria);
+    	CategoriaDTO novaCategoria = service.salvar(dto);
+    	URI uri = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(novaCategoria.getId())
+                .toUri();
+    	
+    	return ResponseEntity.created(uri).body(novaCategoria);
     }
 
     @PutMapping("/{id}")
