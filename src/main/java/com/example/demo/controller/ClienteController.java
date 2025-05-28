@@ -33,12 +33,17 @@ public class ClienteController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ClienteDTO> pesquisar(@PathVariable Long id) {
+    public ResponseEntity<ClienteDTO> pesquisarPorId(@PathVariable Long id) {
         return ResponseEntity.ok(serv.buscarPorId(id));
     }
 
+    @GetMapping("cpf/{cpf}")
+    public ResponseEntity<ClienteDTO> pesquisarPorCpf(@PathVariable String cpf) {
+        return ResponseEntity.ok(serv.buscarPorCpf(cpf));
+    }
+
     @PutMapping("/{id}")
-    public ResponseEntity<ClienteDTO> atualizar(@PathVariable Long id, @Valid @RequestBody ClienteDTO clienteDTO) {
+    public ResponseEntity<ClienteDTO> atualizarId(@PathVariable Long id, @Valid @RequestBody ClienteDTO clienteDTO) {
         ClienteDTO atualizado = serv.atualizar(id, clienteDTO);
         return ResponseEntity.ok(atualizado);
     }

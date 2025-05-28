@@ -37,12 +37,20 @@ public class ClienteService {
                 .orElse(null);
     }
 
+    public ClienteDTO buscarPorCpf(String cpf) {
+        return repo.findByCpf(cpf)
+                .map(ClienteDTO::new)
+                .orElse(null);
+    }
+
     public ClienteDTO atualizar(Long id, ClienteDTO clienteDTO) {
         return repo.findById(id).map(
                 cli -> {
                     EnderecoDTO novoEndereco = endServ.buscar(clienteDTO.getCep());
-                    cli = new Cliente(clienteDTO);
-                    cli.setId(id);
+                    cli.setNome(clienteDTO.getNome());
+                    cli.setEmail(clienteDTO.getEmail());
+                    cli.setTelefone(clienteDTO.getTelefone());
+                    cli.setCpf(clienteDTO.getCpf());
                     cli.setEndereco(new Endereco(novoEndereco));
                     return new ClienteDTO(repo.save(cli));
                 }).orElse(null);
