@@ -1,64 +1,22 @@
-package com.example.demo.model;
+package com.example.demo.dto;
 
-import org.hibernate.validator.constraints.Length;
+import com.example.demo.model.Endereco;
 
-import com.example.demo.dto.EnderecoDTO;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.validation.constraints.NotBlank;
-
-@Entity
-public class Endereco {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column(nullable = false)
-    @NotBlank(message = "O CEP não pode estar vazio")
+public class EnderecoDTO {
     private String cep;
-
-    @Column(nullable = false)
-    @NotBlank(message = "O logradouro não pode estar vazio")
     private String logradouro;
-
-    @Column(nullable = false)
     private String complemento;
-
-    @Column(nullable = false)
-    @NotBlank(message = "O bairro não pode estar vazio")
     private String bairro;
-
-    @Column(nullable = false)
-    @NotBlank(message = "A localidade não pode estar vazia")
     private String localidade;
-
-    @Column(nullable = false)
-    @NotBlank(message = "O UF não pode estar vazio")
-    @Length(min = 2, max = 2, message = "O UF deve ter exatamente 2 caracteres")
     private String uf;
 
-    public Endereco() {}
-
-    public Endereco(EnderecoDTO endereco) {
+    public EnderecoDTO(Endereco endereco) {
         this.cep = endereco.getCep();
         this.logradouro = endereco.getLogradouro();
         this.complemento = endereco.getComplemento();
         this.bairro = endereco.getBairro();
         this.localidade = endereco.getLocalidade();
         this.uf = endereco.getUf();
-        
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getCep() {
