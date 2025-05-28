@@ -9,6 +9,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 @Entity
@@ -23,7 +24,7 @@ public class Produto {
     private String nome;
 
     @Column(nullable = false)
-    @NotBlank(message = "O preço do produto não pode estar vazio")
+    @NotNull(message = "O preço do produto não pode estar vazio")
     @Min(value = 0, message = "O preço do produto deve ser maior ou igual a zero")
     private double preco;
 
