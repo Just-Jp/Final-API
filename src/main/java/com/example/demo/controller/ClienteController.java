@@ -61,6 +61,4 @@ public class ClienteController {
                 .toUri();
         return ResponseEntity.created(uri).body(novoDTO);
     }
-
-
 }
