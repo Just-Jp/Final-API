@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.example.demo.dto.ClienteDTO;
 import com.example.demo.dto.EnderecoDTO;
 import com.example.demo.exception.CpfException;
+import com.example.demo.exception.EmailException;
 import com.example.demo.model.Cliente;
 import com.example.demo.model.Endereco;
 import com.example.demo.repository.ClienteRepository;
@@ -23,6 +24,7 @@ public class ClienteService {
     @Autowired
     private EnderecoService endServ;
 
+    // Metodos CRUD
     public List<ClienteDTO> listar() {
         return repo.findAll().stream()
                 .map(ClienteDTO::new)
@@ -55,7 +57,7 @@ public class ClienteService {
 
         cliente = repo.findByEmail(clienteDTO.getEmail());
         if (cliente.isPresent()) {
-            throw new RuntimeException("Email já cadastrado: " + clienteDTO.getEmail());
+            throw new EmailException("Email já cadastrado: " + clienteDTO.getEmail());
         }
 
         Cliente novoCliente = new Cliente(clienteDTO);
@@ -69,6 +71,7 @@ public class ClienteService {
         return new ClienteDTO(repo.save(novoCliente));
     }
 
+    // Funções Extras
     public Cliente buscarCpf(String cpf) {
         return repo.findByCpf(cpf).orElse(null);
     }

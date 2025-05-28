@@ -18,6 +18,8 @@ import com.example.demo.dto.ClienteDTO;
 import com.example.demo.model.Cliente;
 import com.example.demo.service.ClienteService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/clientes")
 public class ClienteController {
@@ -36,13 +38,13 @@ public class ClienteController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ClienteDTO> atualizar(@PathVariable Long id, @RequestBody ClienteDTO clienteDTO) {
+    public ResponseEntity<ClienteDTO> atualizar(@PathVariable Long id, @Valid @RequestBody ClienteDTO clienteDTO) {
         ClienteDTO atualizado = serv.atualizar(id, clienteDTO);
         return ResponseEntity.ok(atualizado);
     }
 
     @PostMapping
-    public ResponseEntity<ClienteDTO> inserir(@RequestBody ClienteDTO clienteDTO) {
+    public ResponseEntity<ClienteDTO> inserir(@Valid @RequestBody ClienteDTO clienteDTO) {
 
         ClienteDTO novoDTO = serv.inserir(clienteDTO);
 
@@ -55,5 +57,5 @@ public class ClienteController {
         return ResponseEntity.created(uri).body(novoDTO);
     }
 
-    
+
 }

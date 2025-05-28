@@ -17,6 +17,7 @@ public class EnderecoService {
     @Autowired
     private EnderecoRepository repo;
 
+    // Metodos CRUD
     public List<EnderecoDTO> listar() {
         return repo.findAll().stream()
                 .map(EnderecoDTO::new)
@@ -45,6 +46,8 @@ public class EnderecoService {
         return new EnderecoDTO(repo.save(endereco));
     }
 
+
+    // Funções Extras
     public Endereco buscarCep(String cep) {
         return repo.findByCep(cep).orElse(null);
     }
