@@ -17,10 +17,6 @@ import com.example.demo.repository.CategoriaRepository;
 		@Autowired
 	    private CategoriaRepository repository;
 
-	    public CategoriaService(CategoriaRepository repository) {
-	        this.repository = repository;
-	    }
-
 	    public CategoriaDTO salvar(CategoriaDTO dto) {
 	        Categoria categoria = new Categoria();
 	        categoria.setNome(dto.getNome());
@@ -47,6 +43,11 @@ import com.example.demo.repository.CategoriaRepository;
 	    public CategoriaDTO buscarPorId(Long id) {
 	        Categoria categoria = repository.findById(id)
 	                .orElseThrow();
+	        return toDTO(categoria);
+	    }
+
+		public CategoriaDTO buscarPorNome(String nome) {
+			Categoria categoria = repository.findByNome(nome).orElseThrow();
 	        return toDTO(categoria);
 	    }
 

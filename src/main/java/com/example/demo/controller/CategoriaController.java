@@ -23,8 +23,7 @@ import jakarta.validation.Valid;
 @RequestMapping("/categorias")
 public class CategoriaController {
 	
-	
-    private  CategoriaService service;
+    private CategoriaService service;
 
     public CategoriaController(CategoriaService service) {
         this.service = service;

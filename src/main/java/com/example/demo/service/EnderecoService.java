@@ -32,6 +32,7 @@ public class EnderecoService {
         } else {
             RestTemplate restTemplate = new RestTemplate();
             String uri = "http://viacep.com.br/ws/" + cep + "/json";
+            
             Optional<Endereco> enderecoViaCep = Optional.ofNullable(restTemplate.getForObject(uri, Endereco.class));
             if (enderecoViaCep.isPresent() && enderecoViaCep.get().getCep() != null) {
                 Optional<Endereco> enderecoExistente = repo.findByCep(enderecoViaCep.get().getCep());
@@ -48,7 +49,8 @@ public class EnderecoService {
     }
 
     private EnderecoDTO inserir(Endereco endereco) {
-        return new EnderecoDTO(repo.save(endereco));
+        Endereco novoEndereco = repo.save(endereco);
+        return new EnderecoDTO(novoEndereco);
     }
 
     // Funções Extras

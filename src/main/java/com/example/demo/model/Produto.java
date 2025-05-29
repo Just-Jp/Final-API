@@ -1,5 +1,7 @@
 package com.example.demo.model;
 
+import com.example.demo.dto.ProdutoDTO;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -14,7 +16,6 @@ import jakarta.validation.constraints.Size;
 
 @Entity
 public class Produto {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -45,6 +46,13 @@ public class Produto {
         this.preco = preco;
         this.categoria = categoria;
         this.descricao = descricao;
+    }
+
+    public Produto(ProdutoDTO produtoDTO, Categoria categoria) {
+        this.nome = produtoDTO.getNome();
+        this.preco = produtoDTO.getPreco();
+        this.categoria = categoria;
+        this.descricao = produtoDTO.getDescricao();
     }
 
     public Long getId() {

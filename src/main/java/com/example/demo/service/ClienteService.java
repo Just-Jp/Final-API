@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.ClienteDTO;
-import com.example.demo.dto.EnderecoDTO;
 import com.example.demo.exception.CpfException;
 import com.example.demo.exception.EmailException;
 import com.example.demo.model.Cliente;
@@ -44,16 +43,19 @@ public class ClienteService {
     }
 
     public ClienteDTO atualizar(Long id, ClienteDTO clienteDTO) {
-        return repo.findById(id).map(
-                cli -> {
-                    EnderecoDTO novoEndereco = endServ.buscar(clienteDTO.getCep());
-                    cli.setNome(clienteDTO.getNome());
-                    cli.setEmail(clienteDTO.getEmail());
-                    cli.setTelefone(clienteDTO.getTelefone());
-                    cli.setCpf(clienteDTO.getCpf());
-                    cli.setEndereco(new Endereco(novoEndereco));
-                    return new ClienteDTO(repo.save(cli));
-                }).orElse(null);
+        return repo.findById(id).map(cli -> {
+            Endereco endereco = endServ.buscarCep(clienteDTO.getCep());
+            if (endereco == null) {
+                endServ.buscar(clienteDTO.getCep());
+                endereco = endServ.buscarCep(clienteDTO.getCep());
+            }
+            cli.setNome(clienteDTO.getNome());
+            cli.setEmail(clienteDTO.getEmail());
+            cli.setTelefone(clienteDTO.getTelefone());
+            cli.setCpf(clienteDTO.getCpf());
+            cli.setEndereco(endereco);
+            return new ClienteDTO(repo.save(cli));
+        }).orElse(null);
     }
 
     public ClienteDTO inserir(ClienteDTO clienteDTO) throws RuntimeException {
@@ -76,7 +78,8 @@ public class ClienteService {
         }
         novoCliente.setEndereco(endereco);
 
-        return new ClienteDTO(repo.save(novoCliente));
+        Cliente adicionado = repo.save(novoCliente);
+        return new ClienteDTO(adicionado);
     }
 
     // Funções Extras
