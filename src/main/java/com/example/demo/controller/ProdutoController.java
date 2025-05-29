@@ -2,7 +2,6 @@ package com.example.demo.controller;
 
 import java.util.List;
 
-import com.example.demo.service.ProdutoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,10 +12,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo.model.Produto;
+import com.example.demo.dto.ProdutoDTO;
+import com.example.demo.service.ProdutoService;
 
 import jakarta.validation.Valid;
 
@@ -28,19 +27,19 @@ public class ProdutoController {
     private ProdutoService produtoService;
 
     @PostMapping
-    public ResponseEntity<Produto> inserir(@Valid @RequestBody Produto produto) {
-        Produto novoProduto = produtoService.inserir(produto);
+    public ResponseEntity<ProdutoDTO> inserir(@Valid @RequestBody ProdutoDTO produtoDTO) {
+        ProdutoDTO novoProduto = produtoService.inserir(produtoDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(novoProduto);
     }
 
     @GetMapping
-    public ResponseEntity<List<Produto>> listar() {
+    public ResponseEntity<List<ProdutoDTO>> listar() {
         return ResponseEntity.ok(produtoService.listar());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Produto> buscar(@PathVariable Long id) {
-        Produto produto = produtoService.buscar(id);
+    public ResponseEntity<ProdutoDTO> buscar(@PathVariable Long id) {
+        ProdutoDTO produto = produtoService.buscar(id);
         if (produto != null) {
             return ResponseEntity.ok(produto);
         }
@@ -48,8 +47,8 @@ public class ProdutoController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Produto> atualizar(@PathVariable Long id, @Valid @RequestBody Produto produto){
-        Produto produtoAtualizado = produtoService.atualizar(id, produto);
+    public ResponseEntity<ProdutoDTO> atualizar(@PathVariable Long id, @Valid @RequestBody ProdutoDTO produtoDTO) {
+        ProdutoDTO produtoAtualizado = produtoService.atualizar(id, produtoDTO);
         if (produtoAtualizado != null) {
             return ResponseEntity.ok(produtoAtualizado);
         }
@@ -57,11 +56,11 @@ public class ProdutoController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletar(@PathVariable Long id) {
-        Produto produto = produtoService.buscar(id);
-        if (produto != null) {
+    public ResponseEntity<ProdutoDTO> deletar(@PathVariable Long id) {
+        ProdutoDTO produtoDTO = produtoService.buscar(id);
+        if (produtoDTO != null) {
             produtoService.deletar(id);
-            return ResponseEntity.noContent().build();
+            return ResponseEntity.ok(produtoDTO);
         }
         return ResponseEntity.notFound().build();
     }
