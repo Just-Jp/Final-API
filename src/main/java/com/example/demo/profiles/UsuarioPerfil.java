@@ -41,7 +41,7 @@ public class UsuarioPerfil {
         this.dataCriacao = dataCriacao;
     }
 
-    public void setUsuario(Usuario usuario) { 
+    public void setUsuario(Usuario usuario) {
         this.id.setUsuario(usuario);
     }
 
