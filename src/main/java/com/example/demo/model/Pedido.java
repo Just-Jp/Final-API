@@ -3,8 +3,6 @@ package com.example.demo.model;
 import java.time.LocalDate;
 import java.util.List;
 
-import com.example.demo.dto.PedidoDTO;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -16,7 +14,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 public class Pedido {
@@ -26,24 +25,24 @@ public class Pedido {
 
     @JoinColumn(name = "id_cliente", nullable = false)
     @Valid
-    @NotBlank(message = "O cliente não pode estar vazio")
+    @NotNull(message = "O cliente não pode estar vazio")
     @ManyToOne
     private Cliente cliente;
 
     @Column(nullable = false)
     @Valid
-    @NotBlank(message = "A lista de produtos não pode estar vazia")
+    @NotEmpty(message = "A lista de produtos não pode estar vazia")
     @OneToMany
     private List<Produto> produtos;
 
     @Column(nullable = false)
     @Valid
-    @NotBlank(message = "A data do pedido não pode estar vazia")
+    @NotNull(message = "A data do pedido não pode estar vazia")
     private LocalDate dataPedido;
 
     @Column(nullable = false)
     @Valid
-    @NotBlank(message = "O status do pedido não pode estar vazio")
+    @NotNull(message = "O status do pedido não pode estar vazio")
     @Enumerated(EnumType.STRING)
     private Status status;
     
@@ -87,12 +86,5 @@ public class Pedido {
 
     public void setStatus(Status status) {
         this.status = status;
-    }
-    
-    public Pedido(PedidoDTO pedidoDto) {
-    	this.cliente = pedidoDto.getCliente();
-		this.dataPedido = pedidoDto.getDataPedido();
-		this.produtos = pedidoDto.getProdutos();
-		this.status = pedidoDto.getStatus();
     }
 }

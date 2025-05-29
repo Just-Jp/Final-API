@@ -21,54 +21,53 @@ import com.example.demo.model.Pedido;
 import com.example.demo.repository.PedidoRepository;
 import com.example.demo.service.PedidoService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/pedidos")
 public class PedidoController {
 
 	@Autowired
 	private PedidoService pedidoService;
-	
+
 	@Autowired
 	private PedidoRepository pedidoRepository;
-	
+
 	@GetMapping
-	public ResponseEntity<List<PedidoDTO>> listar(){
+	public ResponseEntity<List<PedidoDTO>> listar() {
 		List<PedidoDTO> produtos = pedidoService.buscarTodos();
-        return ResponseEntity.ok(produtos);
+		return ResponseEntity.ok(produtos);
 	}
-	
+
 	@GetMapping("/{id}")
-	public ResponseEntity<PedidoDTO> buscar(@PathVariable Long id){
+	public ResponseEntity<PedidoDTO> buscar(@PathVariable Long id) {
 		Optional<Pedido> pedidoOpt = pedidoRepository.findById(id);
-		if(pedidoOpt.isPresent()) {
+		if (pedidoOpt.isPresent()) {
 			PedidoDTO pedidoDTO = new PedidoDTO(pedidoOpt.get());
 			return ResponseEntity.ok(pedidoDTO);
 		}
 		return ResponseEntity.notFound().build();
 	}
-	
+
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public Pedido inserir(@RequestBody Pedido pedido) {
-		return pedidoRepository.save(pedido);
+	public PedidoDTO inserir(@RequestBody PedidoDTO pedidoDTO) {
+		return pedidoService.inserir(pedidoDTO);
 	}
-	
+
 	@PutMapping("/{id}")
-	public ResponseEntity<PedidoDTO> atualizar(@PathVariable Long id, @RequestBody Pedido pedido){
-		Optional<Pedido> pedidoOpt = pedidoRepository.findById(id);
-		if(pedidoOpt.isPresent()) {
-			pedido.setId(id);
-			pedido = pedidoRepository.save(pedido);
-			PedidoDTO pedidoDTO = new PedidoDTO(pedido);
-			return ResponseEntity.ok(pedidoDTO);
-		}
-		return ResponseEntity.notFound().build();
-	}
-	
+	public ResponseEntity<PedidoDTO> atualizar(@PathVariable Long id, @Valid @RequestBody PedidoDTO pedidoDTO) {
+        PedidoDTO pedidoAtualizado = pedidoService.atualizar(id, pedidoDTO);
+        if (pedidoAtualizado != null) {
+            return ResponseEntity.ok(pedidoAtualizado);
+        }
+        return ResponseEntity.notFound().build();
+    }
+
 	@DeleteMapping("/{id}")
-	public ResponseEntity<Void> deletar(@PathVariable Long id){
+	public ResponseEntity<Void> deletar(@PathVariable Long id) {
 		boolean pedidoExist = pedidoRepository.existsById(id);
-		if(pedidoExist) {
+		if (pedidoExist) {
 			pedidoRepository.deleteById(id);
 			return ResponseEntity.noContent().build();
 		}
