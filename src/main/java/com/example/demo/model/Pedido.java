@@ -3,6 +3,8 @@ package com.example.demo.model;
 import java.time.LocalDate;
 import java.util.List;
 
+import com.example.demo.dto.PedidoDTO;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -44,6 +46,8 @@ public class Pedido {
     @NotBlank(message = "O status do pedido não pode estar vazio")
     @Enumerated(EnumType.STRING)
     private Status status;
+    
+    public Pedido() {}
 
     public Long getId() {
         return id;
@@ -83,5 +87,12 @@ public class Pedido {
 
     public void setStatus(Status status) {
         this.status = status;
+    }
+    
+    public Pedido(PedidoDTO pedidoDto) {
+    	this.cliente = pedidoDto.getCliente();
+		this.dataPedido = pedidoDto.getDataPedido();
+		this.produtos = pedidoDto.getProdutos();
+		this.status = pedidoDto.getStatus();
     }
 }
