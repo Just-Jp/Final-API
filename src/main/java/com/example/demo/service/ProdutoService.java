@@ -77,4 +77,5 @@ public class ProdutoService {
 
     public List<Produto> buscarProdutosPorIds(List<Long> ids) {
     return produtoRepository.findAllById(ids);
+    }
 }
