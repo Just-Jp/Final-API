@@ -35,6 +35,9 @@ public class Pedido {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Status status;
+
+    @Column
+    private Double valorTotal;
     
     public Pedido() {}
 
@@ -76,5 +79,13 @@ public class Pedido {
 
     public void setStatus(Status status) {
         this.status = status;
+    }
+
+    public Double getValorTotal() {
+        return valorTotal;
+    }
+
+    public void setValorTotal(Double valorTotal) {
+        this.valorTotal = valorTotal;
     }
 }

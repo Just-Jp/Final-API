@@ -86,13 +86,13 @@ public class PedidoService {
 
 					// (Preco / Desconto) * Quantidade
 					double valorVenda = calcularDesconto(produto.getPreco(), itemDto.getDesconto());
-					pedidoProduto.setValorVenda(valorVenda);
 
-					pedidoProduto.setValorVenda(valorVenda);
+					pedidoProduto.setValorVenda(valorVenda * itemDto.getQuantidade());
 					itens.add(pedidoProduto);
 				}
 			}
 			pedidoExistente.setItens(itens);
+			pedidoExistente.setValorTotal(calcularValorTotal(itens));
 
 			Pedido salvo = pedidoRepository.save(pedidoExistente);
 			return new PedidoDTO(salvo);
@@ -126,6 +126,7 @@ public class PedidoService {
 			}
 		}
 		pedido.setItens(itens);
+		pedido.setValorTotal(calcularValorTotal(itens));
 		return pedido;
 	}
 
@@ -134,6 +135,13 @@ public class PedidoService {
 			throw new IllegalArgumentException("Desconto deve estar entre 0 e 100");
 		}
 		return preco * (1 - desconto / 100);
+	}
+
+	public double calcularValorTotal(List<PedidoProduto> itens) {
+		if (itens == null) return 0.0;
+		return itens.stream()
+				.mapToDouble(PedidoProduto::getValorVenda)
+				.sum();
 	}
 
 }

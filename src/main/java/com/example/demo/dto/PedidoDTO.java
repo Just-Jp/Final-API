@@ -29,6 +29,8 @@ public class PedidoDTO {
     @NotNull(message = "A data do pedido não pode estar vazia")
     private LocalDate dataPedido;
 
+	private Double valorTotal;
+
     public PedidoDTO(Pedido pedido) {
         this.cliente = pedido.getCliente().getNome();
         this.dataPedido = pedido.getDataPedido();
@@ -41,6 +43,7 @@ public class PedidoDTO {
                 item.getDesconto()
             ))
             .collect(Collectors.toList());
+		this.valorTotal = pedido.getValorTotal();
     }
 
     public PedidoDTO() {}
@@ -76,5 +79,13 @@ public class PedidoDTO {
     public void setDataPedido(LocalDate dataPedido) {
         this.dataPedido = dataPedido;
     }
+
+	public Double getValorTotal() {
+		return valorTotal;
+	}
+
+	public void setValorTotal(Double valorTotal) {
+		this.valorTotal = valorTotal;
+	}
 }
 
