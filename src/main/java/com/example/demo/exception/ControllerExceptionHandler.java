@@ -2,7 +2,6 @@ package com.example.demo.exception;
 
 import java.time.LocalDateTime;
 
-
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -32,11 +31,15 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
     }
 
+    @ExceptionHandler(SenhaException.class)
+    protected ResponseEntity<Object> handleEmailExceptoin(SenhaException ex) {
+        return ResponseEntity.unprocessableEntity().body(ex.getMessage());
+    }
+
     @ExceptionHandler(WishListException.class)
     public ResponseEntity<String> handleWishListNotFound(WishListException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }
-
 
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(
@@ -52,22 +55,22 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
                 ex.getBindingResult().getFieldErrors().stream()
                         .map(erro -> erro.getField() + ": " + erro.getDefaultMessage())
                         .toList());
-                return ResponseEntity.status(status.value()).body(erroResposta);
+        return ResponseEntity.status(status.value()).body(erroResposta);
     }
-	
-	@Override
-	protected ResponseEntity<Object> handleHttpMessageNotReadable(
+
+    @Override
+    protected ResponseEntity<Object> handleHttpMessageNotReadable(
             @NonNull HttpMessageNotReadableException ex,
-			@NonNull HttpHeaders headers, 
-            @NonNull HttpStatusCode status, 
+            @NonNull HttpHeaders headers,
+            @NonNull HttpStatusCode status,
             @NonNull WebRequest request) {
-		
-		List<String> erros= new ArrayList<>();
-		erros.add("Valor de enumeração inválido: " + ex.getMostSpecificCause().getMessage());
-		
-		ErroResposta erroResposta = new ErroResposta(status.value(), 
-				"Existem campos inválidos, confira o preenchimento", LocalDateTime.now(), erros);
-		
-		return super.handleExceptionInternal(ex, erroResposta, headers, status, request);
-	}
+
+        List<String> erros = new ArrayList<>();
+        erros.add("Valor de enumeração inválido: " + ex.getMostSpecificCause().getMessage());
+
+        ErroResposta erroResposta = new ErroResposta(status.value(),
+                "Existem campos inválidos, confira o preenchimento", LocalDateTime.now(), erros);
+
+        return super.handleExceptionInternal(ex, erroResposta, headers, status, request);
+    }
 }

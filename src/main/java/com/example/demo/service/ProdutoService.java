@@ -38,6 +38,7 @@ public class ProdutoService {
 
     public ProdutoDTO inserir(ProdutoDTO produtoDTO) {
         Produto produto = toEntity(produtoDTO);
+        // Instancia historico produto e salva aqui
         Produto salvo = produtoRepository.save(produto);
         return new ProdutoDTO(salvo);
     }
@@ -49,6 +50,7 @@ public class ProdutoService {
 
             Categoria categoria = categoriaRepository.findByNome(produtoDTO.getCategoria())
                     .orElseThrow(() -> new RuntimeException("Categoria não encontrada: " + produtoDTO.getCategoria()));
+                    
             produtoExistente.setNome(produtoDTO.getNome());
             produtoExistente.setPreco(produtoDTO.getPreco());
             produtoExistente.setCategoria(categoria);
