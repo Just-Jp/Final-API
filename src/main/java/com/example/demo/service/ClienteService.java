@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.example.demo.dto.ClienteDTO;
 import com.example.demo.exception.CpfException;
 import com.example.demo.exception.EmailException;
+import com.example.demo.mail.MailConfig;
 import com.example.demo.model.Cliente;
 import com.example.demo.model.Endereco;
 import com.example.demo.repository.ClienteRepository;
@@ -22,6 +23,9 @@ public class ClienteService {
 
     @Autowired
     private EnderecoService endServ;
+
+    @Autowired
+    private MailConfig mailConfig;
 
     // Metodos CRUD
     public List<ClienteDTO> listar() {
@@ -54,6 +58,9 @@ public class ClienteService {
             cli.setTelefone(clienteDTO.getTelefone());
             cli.setCpf(clienteDTO.getCpf());
             cli.setEndereco(endereco);
+
+            mailConfig.sendEmail(cli.getEmail(), "Cadastro alterado com sucesso", 
+                        "Olá " + cli.getNome() + ",\n\nSeu cadastro foi alterado com sucesso!\n\nLoja Serratec!");
             return new ClienteDTO(repo.save(cli));
         }).orElse(null);
     }
@@ -79,6 +86,8 @@ public class ClienteService {
         novoCliente.setEndereco(endereco);
 
         Cliente adicionado = repo.save(novoCliente);
+        mailConfig.sendEmail(adicionado.getEmail(), "Cadastro realizado com sucesso", 
+            "Olá " + adicionado.getNome() + ",\n\nSeu cadastro foi realizado com sucesso!\n\nLoja Serratec!");
         return new ClienteDTO(adicionado);
     }
 

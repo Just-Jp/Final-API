@@ -1,7 +1,6 @@
 package com.example.demo.service;
 
 import java.util.ArrayList;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -10,10 +9,11 @@ import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.PedidoDTO;
 import com.example.demo.dto.PedidoProdutoDTO;
+import com.example.demo.mail.MailConfig;
 import com.example.demo.model.Cliente;
 import com.example.demo.model.Pedido;
-import com.example.demo.model.Produto;
 import com.example.demo.model.PedidoProduto;
+import com.example.demo.model.Produto;
 import com.example.demo.repository.ClienteRepository;
 import com.example.demo.repository.PedidoRepository;
 import com.example.demo.repository.ProdutoRepository;
@@ -29,6 +29,10 @@ public class PedidoService {
 
 	@Autowired
 	private ProdutoRepository produtoRepository;
+
+	@Autowired
+	private MailConfig mailConfig;
+
 
 	public List<PedidoDTO> buscarTodos() {
 		List<Pedido> pedidos = pedidoRepository.findAll();
@@ -48,6 +52,11 @@ public class PedidoService {
 	public PedidoDTO inserir(PedidoDTO pedidoDto) {
 		Pedido pedido = toEntity(pedidoDto);
 		Pedido pedidoNovo = pedidoRepository.save(pedido);
+
+		mailConfig.sendEmail(pedidoNovo.getCliente().getEmail(), "Pedido realizado com sucesso",
+				"Olá " + pedidoNovo.getCliente().getNome()
+						+ ",\n\nSeu pedido foi realizado com sucesso!\n\nLoja Serratec!");
+
 		return new PedidoDTO(pedidoNovo);
 	}
 
@@ -79,7 +88,7 @@ public class PedidoService {
 					Produto produto = produtoRepository.findByNome(itemDto.getProduto())
 							.orElseThrow(() -> new RuntimeException("Produto não encontrado: " + itemDto.getProduto()));
 					PedidoProduto pedidoProduto = new PedidoProduto();
-					pedidoProduto.setPedido(pedidoExistente); 
+					pedidoProduto.setPedido(pedidoExistente);
 					pedidoProduto.setProduto(produto);
 					pedidoProduto.setQuantidade(itemDto.getQuantidade());
 					pedidoProduto.setDesconto(itemDto.getDesconto());
@@ -93,6 +102,10 @@ public class PedidoService {
 			}
 			pedidoExistente.setItens(itens);
 			pedidoExistente.setValorTotal(calcularValorTotal(itens));
+
+			mailConfig.sendEmail(pedidoExistente.getCliente().getEmail(), "Pedido atualizado com sucesso",
+					"Olá " + pedidoExistente.getCliente().getNome()
+							+ ",\n\nSeu pedido foi atualizado com sucesso!\n\nLoja Serratec!");
 
 			Pedido salvo = pedidoRepository.save(pedidoExistente);
 			return new PedidoDTO(salvo);
@@ -138,7 +151,8 @@ public class PedidoService {
 	}
 
 	public double calcularValorTotal(List<PedidoProduto> itens) {
-		if (itens == null) return 0.0;
+		if (itens == null)
+			return 0.0;
 		return itens.stream()
 				.mapToDouble(PedidoProduto::getValorVenda)
 				.sum();
