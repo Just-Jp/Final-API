@@ -3,8 +3,6 @@ package com.example.demo.dto;
 import jakarta.validation.constraints.NotBlank;
 
 public class CategoriaDTO {
-
-	
     private Long id;
     
     @NotBlank(message = "O nome da categoria é obrigatório")

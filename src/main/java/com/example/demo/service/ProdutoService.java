@@ -49,7 +49,6 @@ public class ProdutoService {
 
             Categoria categoria = categoriaRepository.findByNome(produtoDTO.getCategoria())
                     .orElseThrow(() -> new RuntimeException("Categoria não encontrada: " + produtoDTO.getCategoria()));
-                    
             produtoExistente.setNome(produtoDTO.getNome());
             produtoExistente.setPreco(produtoDTO.getPreco());
             produtoExistente.setCategoria(categoria);
