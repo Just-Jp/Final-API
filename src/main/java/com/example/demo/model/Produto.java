@@ -37,6 +37,9 @@ public class Produto {
     @NotBlank(message = "A descrição do produto não pode estar vazia")
     @Size(max = 30, message = "A descrição do produto não pode ter mais de 30 caracteres")
     private String descricao;
+    
+    @Column(nullable = false)
+    private boolean ativo; // Por padrão, o produto é ativo
 
     public Produto() {
     }
@@ -46,13 +49,18 @@ public class Produto {
         this.preco = preco;
         this.categoria = categoria;
         this.descricao = descricao;
+        this.ativo = true;
+       
     }
 
-    public Produto(ProdutoDTO produtoDTO, Categoria categoria) {
+   
+
+	public Produto(ProdutoDTO produtoDTO, Categoria categoria, boolean ativo) {
         this.nome = produtoDTO.getNome();
         this.preco = produtoDTO.getPreco();
         this.categoria = categoria;
         this.descricao = produtoDTO.getDescricao();
+        this.ativo = true;
     }
 
     public Long getId() {
@@ -94,4 +102,12 @@ public class Produto {
     public void setDescricao(String descricao) {
         this.descricao = descricao;
     }
+    
+    public boolean isAtivo() {
+		return ativo;
+	}
+
+	public void setAtivo(boolean ativo) {
+		this.ativo = ativo;
+	}
 }
