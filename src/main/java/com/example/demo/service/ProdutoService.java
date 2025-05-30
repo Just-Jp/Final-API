@@ -74,4 +74,7 @@ public class ProdutoService {
                 .orElseThrow(() -> new RuntimeException("Categoria não encontrada: " + dto.getCategoria()));
         return new Produto(dto, categoria);
     }
+
+    public List<Produto> buscarProdutosPorIds(List<Long> ids) {
+    return produtoRepository.findAllById(ids);
 }
