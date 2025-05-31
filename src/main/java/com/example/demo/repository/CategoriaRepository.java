@@ -10,5 +10,4 @@ import com.example.demo.model.Categoria;
 @Repository
 public interface CategoriaRepository extends JpaRepository<Categoria, Long> {
     Optional<Categoria> findByNome(String nome);
-
 }

@@ -39,6 +39,7 @@ public class ProdutoService {
 
     public ProdutoDTO inserir(ProdutoDTO produtoDTO) {
         Produto produto = toEntity(produtoDTO);
+        // Instancia historico produto e salva aqui
         Produto salvo = produtoRepository.save(produto);
         return new ProdutoDTO(salvo);
     }
@@ -95,5 +96,9 @@ public class ProdutoService {
         return produtos.stream()
                 .map(ProdutoDTO::new)
                 .collect(Collectors.toList());
+    }
+
+    public List<Produto> buscarProdutosPorIds(List<Long> ids) {
+    return produtoRepository.findAllById(ids);
     }
 }
