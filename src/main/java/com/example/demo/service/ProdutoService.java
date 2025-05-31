@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -73,7 +74,28 @@ public class ProdutoService {
     public Produto toEntity(ProdutoDTO dto) {
         Categoria categoria = categoriaRepository.findByNome(dto.getCategoria())
                 .orElseThrow(() -> new RuntimeException("Categoria não encontrada: " + dto.getCategoria()));
-        return new Produto(dto, categoria);
+        return new Produto(dto, categoria,true);
+    }
+    
+    public ProdutoDTO inativar(Long id) {
+        Produto produto = produtoRepository.findById(id).orElseThrow();
+        produto.setAtivo(false);
+        produtoRepository.save(produto);
+        return new ProdutoDTO(produto);
+    }
+    
+    public ProdutoDTO reativar(Long id) {
+        Produto produto = produtoRepository.findById(id).orElseThrow();
+        produto.setAtivo(true);
+        produtoRepository.save(produto);
+        return new ProdutoDTO(produto);
+    }
+    
+    public List<ProdutoDTO> listarAtivo() {
+        List<Produto> produtos = produtoRepository.findByAtivo(true);
+        return produtos.stream()
+                .map(ProdutoDTO::new)
+                .collect(Collectors.toList());
     }
 
     public List<Produto> buscarProdutosPorIds(List<Long> ids) {
