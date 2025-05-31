@@ -44,6 +44,8 @@ public class Pedido {
     @NotBlank(message = "O status do pedido não pode estar vazio")
     @Enumerated(EnumType.STRING)
     private Status status;
+    
+    
 
     public Long getId() {
         return id;

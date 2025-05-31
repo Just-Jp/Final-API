@@ -52,7 +52,7 @@ import com.example.demo.repository.CategoriaRepository;
 
 	    public void deletar(Long id) {
 	        if (!repository.existsById(id)) {
-	        	throw new RuntimeException();
+	        	throw new RuntimeException ();
 	        }
 	        repository.deleteById(id);
 	    }
