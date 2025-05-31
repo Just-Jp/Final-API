@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.UsuarioDTO;
@@ -31,7 +31,7 @@ public class UsuarioService {
     private PerfilService perfilService;
 
     @Autowired
-    private BCryptPasswordEncoder encoder;
+    private PasswordEncoder encoder;
 
     public List<UsuarioDTO> buscarTodos() {
         List<Usuario> usuarios = usuarioRepository.findAll();

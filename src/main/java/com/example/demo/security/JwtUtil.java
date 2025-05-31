@@ -16,7 +16,6 @@ public class JwtUtil {
     @Value("${auth.jwt-secret}")
     private String jwtSecret;
     @Value("${auth.jwt-expiration-miliseg}")
-    private SecretKey secretKey;
     private Long jwtExpirationMiliseg;
 
     public String generateToken(String username) {
@@ -51,6 +50,7 @@ public class JwtUtil {
     }
 
     public Claims getClaims(String token) {
+        SecretKey secretKey = Keys.hmacShaKeyFor(jwtSecret.getBytes());
         return Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token).getBody();
     }
 }
