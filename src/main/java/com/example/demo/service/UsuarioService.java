@@ -12,8 +12,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.UsuarioDTO;
 import com.example.demo.dto.UsuarioInserirDTO;
-import com.example.demo.exception.EmailException;
-import com.example.demo.exception.SenhaException;
+import com.example.demo.exception.TratamentoException;
 import com.example.demo.profiles.Perfil;
 import com.example.demo.profiles.Usuario;
 import com.example.demo.profiles.UsuarioPerfil;
@@ -46,10 +45,10 @@ public class UsuarioService {
     @Transactional
     public UsuarioDTO inserir(UsuarioInserirDTO usuarioInserirDTO) {
         if (!usuarioInserirDTO.getSenha().equals(usuarioInserirDTO.getConfirmaSenha())) {
-            throw new SenhaException("Senha e Confirma Senha não são iguais");
+            throw new TratamentoException("Senha e Confirma Senha não são iguais");
         }
         if (usuarioRepository.findByEmail(usuarioInserirDTO.getEmail()) != null) {
-            throw new EmailException("Email já cadastrado");
+            throw new TratamentoException("Email já cadastrado");
         }
 
         Usuario usuario = new Usuario();
@@ -69,5 +68,41 @@ public class UsuarioService {
 
         UsuarioDTO usuarioDTO = new UsuarioDTO(usuario);
         return usuarioDTO;
+    }
+
+    @Transactional
+    public UsuarioDTO atualizar(Long id, UsuarioInserirDTO usuarioAtualizarDTO) {
+        Usuario usuario = usuarioRepository.findById(id)
+            .orElseThrow(() -> new TratamentoException("Usuário não encontrado"));
+
+        if (!usuarioAtualizarDTO.getSenha().equals(usuarioAtualizarDTO.getConfirmaSenha())) {
+            throw new TratamentoException("Senha e Confirma Senha não são iguais");
+        }
+        if (!usuario.getEmail().equals(usuarioAtualizarDTO.getEmail()) &&
+            usuarioRepository.findByEmail(usuarioAtualizarDTO.getEmail()) != null) {
+            throw new TratamentoException("Email já cadastrado");
+        }
+
+        usuario.setNome(usuarioAtualizarDTO.getNome());
+        usuario.setEmail(usuarioAtualizarDTO.getEmail());
+        usuario.setSenha(encoder.encode(usuarioAtualizarDTO.getSenha()));
+
+        Set<UsuarioPerfil> usuarioPerfis = new HashSet<>();
+        for (Perfil perfil : usuarioAtualizarDTO.getPerfis()) {
+            perfil = perfilService.buscar(perfil.getId());
+            UsuarioPerfil usuarioPerfil = new UsuarioPerfil(usuario, perfil, LocalDate.now());
+            usuarioPerfis.add(usuarioPerfil);
+        }
+        usuario.setUsuarioPerfis(usuarioPerfis);
+
+        usuario = usuarioRepository.save(usuario);
+        return new UsuarioDTO(usuario);
+    }
+
+    @Transactional
+    public void deletar(Long id) {
+        Usuario usuario = usuarioRepository.findById(id)
+            .orElseThrow(() -> new TratamentoException("Usuário não encontrado"));
+        usuarioRepository.delete(usuario);
     }
 }

@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.ProdutoDTO;
+import com.example.demo.exception.TratamentoException;
 import com.example.demo.model.Categoria;
 import com.example.demo.model.Produto;
 import com.example.demo.repository.CategoriaRepository;
@@ -39,7 +40,8 @@ public class ProdutoService {
 
     public ProdutoDTO inserir(ProdutoDTO produtoDTO) {
         Produto produto = toEntity(produtoDTO);
-        // Instancia historico produto e salva aqui
+        categoriaRepository.findByNome(produtoDTO.getCategoria())
+                .orElseThrow(() -> new TratamentoException("Categoria não encontrada: " + produtoDTO.getCategoria()));
         Produto salvo = produtoRepository.save(produto);
         return new ProdutoDTO(salvo);
     }
@@ -50,8 +52,8 @@ public class ProdutoService {
             Produto produtoExistente = produtoOpt.get();
 
             Categoria categoria = categoriaRepository.findByNome(produtoDTO.getCategoria())
-                    .orElseThrow(() -> new RuntimeException("Categoria não encontrada: " + produtoDTO.getCategoria()));
-                    
+                    .orElseThrow(() -> new TratamentoException("Categoria não encontrada: " + produtoDTO.getCategoria()));
+
             produtoExistente.setNome(produtoDTO.getNome());
             produtoExistente.setPreco(produtoDTO.getPreco());
             produtoExistente.setCategoria(categoria);
@@ -59,24 +61,16 @@ public class ProdutoService {
             Produto atualizado = produtoRepository.save(produtoExistente);
             return new ProdutoDTO(atualizado);
         }
-        return null;
+        throw new TratamentoException("Produto não encontrado para atualização");
     }
 
-    public ProdutoDTO deletar(Long id) {
-        ProdutoDTO produtoDTO = buscar(id);
-        if (produtoDTO != null) {
-            produtoRepository.deleteById(id);
-            return produtoDTO;
+    public void deletar(Long id) {
+        if (!produtoRepository.existsById(id)) {
+            throw new TratamentoException("Produto não encontrado");
         }
-        return null;
+        produtoRepository.deleteById(id);
     }
 
-    public Produto toEntity(ProdutoDTO dto) {
-        Categoria categoria = categoriaRepository.findByNome(dto.getCategoria())
-                .orElseThrow(() -> new RuntimeException("Categoria não encontrada: " + dto.getCategoria()));
-        return new Produto(dto, categoria,true);
-    }
-    
     public ProdutoDTO inativar(Long id) {
         Produto produto = produtoRepository.findById(id).orElseThrow();
         produto.setAtivo(false);
@@ -98,7 +92,13 @@ public class ProdutoService {
                 .collect(Collectors.toList());
     }
 
+    public Produto toEntity(ProdutoDTO dto) {
+        Categoria categoria = categoriaRepository.findByNome(dto.getCategoria())
+                .orElseThrow(() -> new RuntimeException("Categoria não encontrada: " + dto.getCategoria()));
+        return new Produto(dto, categoria, true);
+    }
+
     public List<Produto> buscarProdutosPorIds(List<Long> ids) {
-    return produtoRepository.findAllById(ids);
+        return produtoRepository.findAllById(ids);
     }
 }

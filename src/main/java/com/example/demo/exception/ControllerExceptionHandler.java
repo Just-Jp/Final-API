@@ -20,25 +20,9 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 @ControllerAdvice
 public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
-
-    @ExceptionHandler(EmailException.class)
-    protected ResponseEntity<Object> handleEmailException(EmailException ex) {
+    @ExceptionHandler(TratamentoException.class)
+    protected ResponseEntity<Object> handleTratamentoException(TratamentoException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
-    }
-
-    @ExceptionHandler(CpfException.class)
-    protected ResponseEntity<Object> handleCpfException(CpfException ex) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
-    }
-
-    @ExceptionHandler(SenhaException.class)
-    protected ResponseEntity<Object> handleEmailExceptoin(SenhaException ex) {
-        return ResponseEntity.unprocessableEntity().body(ex.getMessage());
-    }
-
-    @ExceptionHandler(WishListException.class)
-    public ResponseEntity<String> handleWishListNotFound(WishListException ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }
 
     @Override

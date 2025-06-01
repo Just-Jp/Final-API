@@ -15,11 +15,10 @@ public class UsuarioDetalheImpl implements UserDetailsService {
     private UsuarioRepository usuarioRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String username)
-            throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Usuario usuario = usuarioRepository.findByEmail(username);
         if (usuario == null) {
-            throw new RuntimeException();
+            throw new UsernameNotFoundException("Usuário não encontrado: " + username);
         }
         return usuario;
     }

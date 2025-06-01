@@ -34,6 +34,11 @@ public class ProdutoController {
 
     @GetMapping
     public ResponseEntity<List<ProdutoDTO>> listar() {
+        return ResponseEntity.ok(produtoService.listarAtivo());
+    }
+
+    @GetMapping("/completo")
+    public ResponseEntity<List<ProdutoDTO>> listarCompleto() {
         return ResponseEntity.ok(produtoService.listar());
     }
 
@@ -56,11 +61,11 @@ public class ProdutoController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ProdutoDTO> deletar(@PathVariable Long id) {
+    public ResponseEntity<Void> deletar(@PathVariable Long id) {
         ProdutoDTO produtoDTO = produtoService.buscar(id);
         if (produtoDTO != null) {
             produtoService.deletar(id);
-            return ResponseEntity.ok(produtoDTO);
+            return ResponseEntity.noContent().build();
         }
         return ResponseEntity.notFound().build();
     }
