@@ -11,8 +11,6 @@ import com.example.demo.dto.PedidoDTO;
 import com.example.demo.dto.PedidoProdutoDTO;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Element;
-import com.itextpdf.text.Font;
-import com.itextpdf.text.FontFactory;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
@@ -37,8 +35,7 @@ public class NotaFiscalConfig {
         PdfWriter.getInstance(document, out);
         document.open();
 
-        Font tituloFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 18);
-        Paragraph titulo = new Paragraph("Nota Fiscal", tituloFont);
+        Paragraph titulo = new Paragraph("Nota Fiscal");
         titulo.setAlignment(Element.ALIGN_CENTER);
         document.add(titulo);
         document.add(new Paragraph(" "));
@@ -55,20 +52,15 @@ public class NotaFiscalConfig {
         tabela.addCell("Valor");
         tabela.addCell("Desconto");
 
-        double total = 0;
-
         for (PedidoProdutoDTO item : pedido.getItens()) {
             tabela.addCell(item.getProduto());
             tabela.addCell(item.getQuantidade().toString());
             tabela.addCell(String.format("R$ %.2f", item.getValorVenda()));
             tabela.addCell(String.format("R$ %.2f", item.getDesconto()));
-
-            total += (item.getValorVenda() - item.getDesconto()) * item.getQuantidade();
         }
 
         document.add(tabela);
-        document.add(new Paragraph(" "));
-        document.add(new Paragraph("Total a Pagar: R$ " + String.format("%.2f", total)));
+        document.add(new Paragraph("\nTotal a Pagar: R$ " + String.format("%.2f", pedido.getValorTotal())));
 
         document.close();
     }

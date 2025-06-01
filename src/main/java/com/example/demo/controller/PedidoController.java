@@ -59,12 +59,12 @@ public class PedidoController {
 
 	@PutMapping("/{id}")
 	public ResponseEntity<PedidoDTO> atualizar(@PathVariable Long id, @Valid @RequestBody PedidoDTO pedidoDTO) {
-        PedidoDTO pedidoAtualizado = pedidoService.atualizar(id, pedidoDTO);
-        if (pedidoAtualizado != null) {
-            return ResponseEntity.ok(pedidoAtualizado);
-        }
-        return ResponseEntity.notFound().build();
-    }
+		PedidoDTO pedidoAtualizado = pedidoService.atualizar(id, pedidoDTO);
+		if (pedidoAtualizado != null) {
+			return ResponseEntity.ok(pedidoAtualizado);
+		}
+		return ResponseEntity.notFound().build();
+	}
 
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Void> deletar(@PathVariable Long id) {
@@ -77,26 +77,17 @@ public class PedidoController {
 	}
 
 	@GetMapping("/{id}/nota-fiscal")
-    public ResponseEntity<byte[]> gerarNotaFiscal(@PathVariable Long id) {
-        try {
-            byte[] pdfBytes = pedidoService.gerarNotaFiscalEmMemoria(id);
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_PDF);
-            headers.setContentDispositionFormData("attachment", "nota_fiscal_pedido_" + id + ".pdf");
-            return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
+	public ResponseEntity<byte[]> gerarNotaFiscal(@PathVariable Long id) throws Exception {
+		byte[] pdfBytes = pedidoService.gerarNotaFiscalJson(id);
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_PDF);
+		headers.setContentDispositionFormData("attachment", "nota_fiscal_pedido_" + id + ".pdf");
+		return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
+	}
 
-	@PostMapping("/{id}/notafiscal")
-    public ResponseEntity<String> gerarNotaFiscalLocal(@PathVariable Long id) {
-        try {
-            String caminho = pedidoService.gerarNotaFiscalLocal(id);
-            return ResponseEntity.ok("Nota fiscal gerada em: " + caminho);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(e.getMessage());
-        }
-    }
+	@PostMapping("/{id}/nota-fiscal")
+	public ResponseEntity<String> gerarNotaFiscalLocal(@PathVariable Long id) throws Exception {
+		String caminho = pedidoService.gerarNotaFiscalLocal(id);
+		return ResponseEntity.ok("Nota fiscal gerada em: " + caminho);
+	}
 }

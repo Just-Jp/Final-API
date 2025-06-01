@@ -149,28 +149,20 @@ public class PedidoService {
 		return pedido;
 	}
 
-	public String gerarNotaFiscalLocal(Long id) {
+	public String gerarNotaFiscalLocal(Long id) throws Exception {
 		PedidoDTO pedido = buscarPorId(id);
 		if (pedido == null)
 			throw new TratamentoException("Pedido não encontrado");
 		String caminho = "nota_fiscal_pedido_" + id + ".pdf";
-		try {
-			notaFiscalConfig.converterPdfArquivo(pedido, caminho);
-			return caminho;
-		} catch (Exception e) {
-			throw new RuntimeException("Erro ao gerar nota fiscal: " + e.getMessage());
-		}
+		notaFiscalConfig.converterPdfArquivo(pedido, caminho);
+		return caminho;
 	}
 
-	public byte[] gerarNotaFiscalEmMemoria(Long id) {
+	public byte[] gerarNotaFiscalJson(Long id) throws Exception {
 		PedidoDTO pedido = buscarPorId(id);
 		if (pedido == null)
 			throw new TratamentoException("Pedido não encontrado");
-		try {
-			return notaFiscalConfig.converterPdfJson(pedido);
-		} catch (Exception e) {
-			throw new RuntimeException("Erro ao gerar nota fiscal: " + e.getMessage());
-		}
+		return notaFiscalConfig.converterPdfJson(pedido);
 	}
 
 	public double calcularDesconto(double preco, double desconto) {
@@ -188,4 +180,3 @@ public class PedidoService {
 				.sum();
 	}
 }
-
