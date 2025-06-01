@@ -1,4 +1,4 @@
-package com.example.model;
+package com.example.demo.model;
 
 import jakarta.persistence.*;
 import java.math.BigDecimal;
@@ -11,8 +11,9 @@ public class HistoricoPreco {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private Long produtoId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "produto_id", nullable = false)
+    private Produto produto;
 
     @Column(nullable = false)
     private BigDecimal preco;
@@ -20,28 +21,34 @@ public class HistoricoPreco {
     @Column(nullable = false)
     private LocalDateTime dataAlteracao;
 
-    // Getters e Setters
     public Long getId() {
         return id;
     }
+
     public void setId(Long id) {
         this.id = id;
     }
-    public Long getProdutoId() {
-        return produtoId;
+
+    public Produto getProduto() {
+        return produto;
     }
-    public void setProdutoId(Long produtoId) {
-        this.produtoId = produtoId;
+
+    public void setProduto(Produto produto) {
+        this.produto = produto;
     }
+
     public BigDecimal getPreco() {
         return preco;
     }
+
     public void setPreco(BigDecimal preco) {
         this.preco = preco;
     }
+
     public LocalDateTime getDataAlteracao() {
         return dataAlteracao;
     }
+
     public void setDataAlteracao(LocalDateTime dataAlteracao) {
         this.dataAlteracao = dataAlteracao;
     }
