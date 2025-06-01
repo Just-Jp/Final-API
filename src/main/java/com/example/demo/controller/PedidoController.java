@@ -4,7 +4,9 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -73,4 +75,28 @@ public class PedidoController {
 		}
 		return ResponseEntity.notFound().build();
 	}
+
+	@GetMapping("/{id}/nota-fiscal")
+    public ResponseEntity<byte[]> gerarNotaFiscal(@PathVariable Long id) {
+        try {
+            byte[] pdfBytes = pedidoService.gerarNotaFiscalEmMemoria(id);
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_PDF);
+            headers.setContentDispositionFormData("attachment", "nota_fiscal_pedido_" + id + ".pdf");
+            return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+	@PostMapping("/{id}/notafiscal")
+    public ResponseEntity<String> gerarNotaFiscalLocal(@PathVariable Long id) {
+        try {
+            String caminho = pedidoService.gerarNotaFiscalLocal(id);
+            return ResponseEntity.ok("Nota fiscal gerada em: " + caminho);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(e.getMessage());
+        }
+    }
 }
