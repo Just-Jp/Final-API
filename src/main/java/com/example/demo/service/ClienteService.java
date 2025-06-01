@@ -33,6 +33,9 @@ public class ClienteService {
     @Autowired
     private UsuarioService usuarioService;
 
+    @Autowired
+    private PerfilService perfilService;
+
     // Metodos CRUD
     public List<ClienteDTO> listar() {
         return repo.findAll().stream()
