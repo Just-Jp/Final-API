@@ -1,8 +1,10 @@
 package com.example.demo.service;
 
+import com.example.demo.model.HistoricoPreco;
+import com.example.demo.model.Produto;
 import com.example.demo.repository.HistoricoPrecoRepository;
-import com.example.model.HistoricoPreco;
-
+import com.example.demo.repository.ProdutoRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -12,21 +14,32 @@ import java.util.List;
 @Service
 public class HistoricoPrecoService {
 
-    private final HistoricoPrecoRepository historicoPrecoRepository;
+    @Autowired
+    private HistoricoPrecoRepository historicoPrecoRepository;
 
-    public HistoricoPrecoService(HistoricoPrecoRepository historicoPrecoRepository) {
+    @Autowired
+    private ProdutoRepository produtoRepository;
+
+    public HistoricoPrecoService(HistoricoPrecoRepository historicoPrecoRepository, ProdutoRepository produtoRepository) {
         this.historicoPrecoRepository = historicoPrecoRepository;
+        this.produtoRepository = produtoRepository;
     }
 
     public HistoricoPreco criarHistorico(Long produtoId, BigDecimal preco) {
+        Produto produto = produtoRepository.findById(produtoId)
+                .orElseThrow(() -> new IllegalArgumentException("Produto não encontrado com ID: " + produtoId));
+
         HistoricoPreco historico = new HistoricoPreco();
-        historico.setProdutoId(produtoId);
+        historico.setProduto(produto);
         historico.setPreco(preco);
         historico.setDataAlteracao(LocalDateTime.now());
         return historicoPrecoRepository.save(historico);
     }
 
     public List<HistoricoPreco> buscarPorProduto(Long produtoId) {
-        return historicoPrecoRepository.findByProdutoIdOrderByDataAlteracaoDesc(produtoId);
+        Produto produto = produtoRepository.findById(produtoId)
+                .orElseThrow(() -> new IllegalArgumentException("Produto não encontrado com ID: " + produtoId));
+
+        return historicoPrecoRepository.findByProdutoOrderByDataAlteracaoDesc(produto);
     }
 }
