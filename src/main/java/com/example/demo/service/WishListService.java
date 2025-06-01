@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.WishListDTO;
-import com.example.demo.exception.WishListException;
+import com.example.demo.exception.TratamentoException;
 import com.example.demo.model.Produto;
 import com.example.demo.model.WishList;
 import com.example.demo.repository.ClienteRepository;
@@ -43,7 +43,7 @@ public class WishListService {
 
     public WishListDTO adicionarProdutos(Long wishListId, List<Long> produtosIds) {
         WishList wishList = wishListRepository.findById(wishListId)
-                .orElseThrow(() -> new WishListException("WishList não encontrada"));
+                .orElseThrow(() -> new TratamentoException("WishList não encontrada"));
         List<Produto> produtosAd = produtoService.buscarProdutosPorIds(produtosIds);
         for (Produto produto : produtosAd) {
             if (!wishList.getProdutos().contains(produto)) {
@@ -63,14 +63,14 @@ public class WishListService {
 
     public void deletar(Long id) {
     if (!wishListRepository.existsById(id)) {
-        throw new WishListException("WishList não encontrada");
+        throw new TratamentoException("WishList não encontrada");
     }
     wishListRepository.deleteById(id);
     }
 
     public WishListDTO removerProduto(Long wishListId, Long produtoId) {
     WishList wishList = wishListRepository.findById(wishListId)
-        .orElseThrow(() -> new WishListException("WishList não encontrada"));
+        .orElseThrow(() -> new TratamentoException("WishList não encontrada"));
 
     wishList.getProdutos().removeIf(produto -> produto.getId().equals(produtoId));
 

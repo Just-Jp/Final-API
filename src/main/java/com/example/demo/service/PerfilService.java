@@ -16,7 +16,14 @@ public class PerfilService {
     public Perfil buscar(Long id) {
         Optional<Perfil> perfilOpt = perfilRepository.findById(id);
         return perfilOpt.get();
-        
+    }
+
+    public Perfil buscarPorNome(String nome) {
+        Optional<Perfil> perfil = perfilRepository.findByNome(nome);
+        if (perfil == null) {
+            throw new RuntimeException("Perfil não encontrado: " + nome);
+        }
+        return perfil.get();
     }
 
 }
