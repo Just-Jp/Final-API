@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.CategoriaDTO;
-import com.example.demo.exception.CategoriaException;
+import com.example.demo.exception.TratamentoException;
 import com.example.demo.model.Categoria;
 import com.example.demo.repository.CategoriaRepository;
 
@@ -19,7 +19,7 @@ public class CategoriaService {
 
 	public CategoriaDTO salvar(CategoriaDTO dto) {
 		if (repository.findByNome(dto.getNome()).isPresent()) {
-			throw new CategoriaException("Já existe uma categoria com esse nome.");
+			throw new TratamentoException("Já existe uma categoria com esse nome.");
 		}
 		Categoria categoria = new Categoria();
 		categoria.setNome(dto.getNome());
@@ -30,9 +30,9 @@ public class CategoriaService {
 
 	public CategoriaDTO atualizar(Long id, CategoriaDTO dto) {
         Categoria categoria = repository.findById(id)
-            	.orElseThrow(() -> new CategoriaException("Categoria não encontrada para atualização"));
+            	.orElseThrow(() -> new TratamentoException("Categoria não encontrada para atualização"));
         if (repository.findByNome(dto.getNome()).isPresent()) {
-            throw new CategoriaException("Já existe uma categoria com esse nome.");
+            throw new TratamentoException("Já existe uma categoria com esse nome.");
         }
         categoria.setNome(dto.getNome());
         categoria = repository.save(categoria);
@@ -48,19 +48,19 @@ public class CategoriaService {
 
 	public CategoriaDTO buscarPorId(Long id) {
         Categoria categoria = repository.findById(id)
-                .orElseThrow(() -> new CategoriaException("Categoria não encontrada"));
+                .orElseThrow(() -> new TratamentoException("Categoria não encontrada"));
         return toDTO(categoria);
     }
 
 	public CategoriaDTO buscarPorNome(String nome) {
         Categoria categoria = repository.findByNome(nome)
-            .orElseThrow(() -> new CategoriaException("Categoria não encontrada"));
+            .orElseThrow(() -> new TratamentoException("Categoria não encontrada"));
         return toDTO(categoria);
     }
 
 	public void deletar(Long id) {
         if (!repository.existsById(id)) {
-            throw new CategoriaException("Categoria não encontrada para exclusão");
+            throw new TratamentoException("Categoria não encontrada para exclusão");
         }
         repository.deleteById(id);
     }
