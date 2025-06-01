@@ -49,7 +49,7 @@ public class ProdutoService {
 
             Categoria categoria = categoriaRepository.findByNome(produtoDTO.getCategoria())
                     .orElseThrow(() -> new RuntimeException("Categoria não encontrada: " + produtoDTO.getCategoria()));
-                    
+
             produtoExistente.setNome(produtoDTO.getNome());
             produtoExistente.setPreco(produtoDTO.getPreco());
             produtoExistente.setCategoria(categoria);
@@ -76,5 +76,6 @@ public class ProdutoService {
     }
 
     public List<Produto> buscarProdutosPorIds(List<Long> ids) {
-    return produtoRepository.findAllById(ids);
+        return produtoRepository.findAllById(ids);
+    }
 }
