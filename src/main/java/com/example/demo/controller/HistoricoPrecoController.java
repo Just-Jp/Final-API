@@ -6,11 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/historico-precos")
+@RequestMapping("historico-precos")
 public class HistoricoPrecoController {
 
     @Autowired
@@ -22,9 +21,11 @@ public class HistoricoPrecoController {
 
     @PostMapping
     public ResponseEntity<HistoricoPreco> criarHistorico(
-            @RequestParam Long produtoId,
-            @RequestParam BigDecimal preco) {
-        HistoricoPreco historico = historicoPrecoService.criarHistorico(produtoId, preco);
+            @RequestBody HistoricoPreco historicoPreco) {
+        HistoricoPreco historico = historicoPrecoService.criarHistorico(
+                historicoPreco.getProduto().getId(),
+                historicoPreco.getPreco()
+        );
         return ResponseEntity.ok(historico);
     }
 
