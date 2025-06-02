@@ -1,18 +1,20 @@
 package com.example.demo.service;
 
-import com.example.demo.dto.EnderecoDTO;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.example.demo.dto.HistoricoPrecoDTO;
+import com.example.demo.exception.TratamentoException;
 import com.example.demo.model.HistoricoPreco;
 import com.example.demo.model.Produto;
 import com.example.demo.repository.HistoricoPrecoRepository;
 import com.example.demo.repository.ProdutoRepository;
-import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
+import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class HistoricoPrecoService {
@@ -37,7 +39,7 @@ public class HistoricoPrecoService {
 
     public List<HistoricoPrecoDTO> buscarPorProduto(Long produtoId) {
         Produto produto = produtoRepository.findById(produtoId)
-                .orElseThrow(() -> new IllegalArgumentException("Produto não encontrado com ID: " + produtoId));
+                .orElseThrow(() -> new TratamentoException("Produto não encontrado com ID: " + produtoId));
 
         List<HistoricoPreco> historicos = historicoPrecoRepository.findByProdutoOrderByDataAlteracaoDesc(produto);
 

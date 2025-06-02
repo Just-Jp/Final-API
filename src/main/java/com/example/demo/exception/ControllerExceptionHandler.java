@@ -16,11 +16,27 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import jakarta.validation.ConstraintViolationException;
+
 @ControllerAdvice
 public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(TratamentoException.class)
     protected ResponseEntity<Object> handleTratamentoException(TratamentoException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    protected ResponseEntity<Object> handleConstraintViolationException(ConstraintViolationException ex) {
+        List<String> erros = ex.getConstraintViolations().stream()
+                .map(violation -> violation.getPropertyPath() + ": " + violation.getMessage())
+                .toList();
+
+        ErroResposta erroResposta = new ErroResposta(
+                HttpStatus.BAD_REQUEST.value(),
+                "Erro de validação nos campos",
+                LocalDateTime.now(),
+                erros);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(erroResposta);
     }
 
     @Override

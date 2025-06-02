@@ -101,7 +101,7 @@ public class ProdutoService {
 
     public Produto toEntity(ProdutoDTO dto) {
         Categoria categoria = categoriaRepository.findByNome(dto.getCategoria())
-                .orElseThrow(() -> new RuntimeException("Categoria não encontrada: " + dto.getCategoria()));
+                .orElseThrow(() -> new TratamentoException("Categoria não encontrada: " + dto.getCategoria()));
         return new Produto(dto, categoria, true);
     }
 

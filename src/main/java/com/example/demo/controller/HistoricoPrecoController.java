@@ -1,7 +1,6 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.HistoricoPrecoDTO;
-import com.example.demo.model.HistoricoPreco;
 import com.example.demo.service.HistoricoPrecoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
