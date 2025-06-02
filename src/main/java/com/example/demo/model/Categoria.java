@@ -1,5 +1,6 @@
 package com.example.demo.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -14,6 +15,7 @@ public class Categoria {
     private Long id;
     
     @Valid
+    @Column(nullable = false, unique = true)
     @NotBlank(message = "O nome da categoria não pode estar vazio")
     private String nome;
 

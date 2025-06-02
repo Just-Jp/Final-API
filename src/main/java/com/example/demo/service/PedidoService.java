@@ -7,9 +7,11 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.example.demo.config.MailConfig;
+import com.example.demo.config.NotaFiscalConfig;
 import com.example.demo.dto.PedidoDTO;
 import com.example.demo.dto.PedidoProdutoDTO;
-import com.example.demo.mail.MailConfig;
+import com.example.demo.exception.TratamentoException;
 import com.example.demo.model.Cliente;
 import com.example.demo.model.CupomDesconto;
 import com.example.demo.model.Pedido;
@@ -38,23 +40,8 @@ public class PedidoService {
 	@Autowired
 	private CupomDescontoRepository cupomDescRepo;
 
-	public Pedido aplicarCupom(String codigoCupom, String email, Pedido pedido) {
-		Optional<CupomDesconto> cupomOpt = cupomDescRepo.findByCodigoAndEmail(codigoCupom, email);
-		if(cupomOpt.isPresent() && cupomOpt.get().getAtivo()) {
-			CupomDesconto cupom = cupomOpt.get();
-			
-			double valorTotal = pedido.getItens().stream().mapToDouble(item -> item.getProduto().getPreco()*item.getQuantidade()).sum();
-			
-			double desconto = valorTotal*(cupom.getPercentual()/100.0);
-			pedido.setValorComDesconto(valorTotal - desconto);
-			
-			cupom.setAtivo(false);
-			cupomDescRepo.save(cupom);
-			
-			return pedidoRepository.save(pedido);
-		}
-		throw new RuntimeException("Cupom inválido ou expirado.");
-		}
+	@Autowired
+	private NotaFiscalConfig notaFiscalConfig;
 
 	public List<PedidoDTO> buscarTodos() {
 		List<Pedido> pedidos = pedidoRepository.findAll();
@@ -86,7 +73,7 @@ public class PedidoService {
 		if (pedidoRepository.existsById(id)) {
 			pedidoRepository.deleteById(id);
 		} else {
-			throw new RuntimeException("Pedido não encontrado");
+			throw new TratamentoException("Pedido não encontrado");
 		}
 	}
 
@@ -99,7 +86,8 @@ public class PedidoService {
 			pedidoExistente.setCliente(
 					clienteRepository.findByNome(pedidoDto.getCliente())
 							.orElseThrow(
-									() -> new RuntimeException("Cliente não encontrado: " + pedidoDto.getCliente())));
+									() -> new TratamentoException(
+											"Cliente não encontrado: " + pedidoDto.getCliente())));
 			pedidoExistente.setDataPedido(pedidoDto.getDataPedido());
 			pedidoExistente.setStatus(pedidoDto.getStatus());
 			pedidoExistente.getItens().clear();
@@ -108,7 +96,8 @@ public class PedidoService {
 			if (pedidoDto.getItens() != null) {
 				for (PedidoProdutoDTO itemDto : pedidoDto.getItens()) {
 					Produto produto = produtoRepository.findByNome(itemDto.getProduto())
-							.orElseThrow(() -> new RuntimeException("Produto não encontrado: " + itemDto.getProduto()));
+							.orElseThrow(
+									() -> new TratamentoException("Produto não encontrado: " + itemDto.getProduto()));
 					PedidoProduto pedidoProduto = new PedidoProduto();
 					pedidoProduto.setPedido(pedidoExistente);
 					pedidoProduto.setProduto(produto);
@@ -132,12 +121,12 @@ public class PedidoService {
 			Pedido salvo = pedidoRepository.save(pedidoExistente);
 			return new PedidoDTO(salvo);
 		}
-		throw new RuntimeException("Pedido não encontrado");
+		throw new TratamentoException("Pedido não encontrado");
 	}
 
 	public Pedido toEntity(PedidoDTO dto) {
 		Cliente cliente = clienteRepository.findByNome(dto.getCliente())
-				.orElseThrow(() -> new RuntimeException("Cliente não encontrado: " + dto.getCliente()));
+				.orElseThrow(() -> new TratamentoException("Cliente não encontrado: " + dto.getCliente()));
 
 		Pedido pedido = new Pedido();
 		pedido.setCliente(cliente);
@@ -148,7 +137,7 @@ public class PedidoService {
 		if (dto.getItens() != null) {
 			for (PedidoProdutoDTO itemDto : dto.getItens()) {
 				Produto produto = produtoRepository.findByNome(itemDto.getProduto())
-						.orElseThrow(() -> new RuntimeException("Produto não encontrado: " + itemDto.getProduto()));
+						.orElseThrow(() -> new TratamentoException("Produto não encontrado: " + itemDto.getProduto()));
 				PedidoProduto pedidoProduto = new PedidoProduto();
 				pedidoProduto.setPedido(pedido);
 				pedidoProduto.setProduto(produto);
@@ -165,6 +154,22 @@ public class PedidoService {
 		return pedido;
 	}
 
+	public String gerarNotaFiscalLocal(Long id) throws Exception {
+		PedidoDTO pedido = buscarPorId(id);
+		if (pedido == null)
+			throw new TratamentoException("Pedido não encontrado");
+		String caminho = "nota_fiscal_pedido_" + id + ".pdf";
+		notaFiscalConfig.converterPdfArquivo(pedido, caminho);
+		return caminho;
+	}
+
+	public byte[] gerarNotaFiscalJson(Long id) throws Exception {
+		PedidoDTO pedido = buscarPorId(id);
+		if (pedido == null)
+			throw new TratamentoException("Pedido não encontrado");
+		return notaFiscalConfig.converterPdfJson(pedido);
+	}
+
 	public double calcularDesconto(double preco, double desconto) {
 		if (desconto < 0 || desconto > 100) {
 			throw new IllegalArgumentException("Desconto deve estar entre 0 e 100");
@@ -179,5 +184,22 @@ public class PedidoService {
 				.mapToDouble(PedidoProduto::getValorVenda)
 				.sum();
 	}
-
+  
+  public Pedido aplicarCupom(String codigoCupom, String email, Pedido pedido) {
+		Optional<CupomDesconto> cupomOpt = cupomDescRepo.findByCodigoAndEmail(codigoCupom, email);
+		if(cupomOpt.isPresent() && cupomOpt.get().getAtivo()) {
+			CupomDesconto cupom = cupomOpt.get();
+			
+			double valorTotal = pedido.getItens().stream().mapToDouble(item -> item.getProduto().getPreco()*item.getQuantidade()).sum();
+			
+			double desconto = valorTotal*(cupom.getPercentual()/100.0);
+			pedido.setValorComDesconto(valorTotal - desconto);
+			
+			cupom.setAtivo(false);
+			cupomDescRepo.save(cupom);
+			
+			return pedidoRepository.save(pedido);
+		}
+		throw new RuntimeException("Cupom inválido ou expirado.");
+		}
 }

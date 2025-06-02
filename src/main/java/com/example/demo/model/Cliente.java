@@ -3,6 +3,7 @@ package com.example.demo.model;
 import java.util.List;
 
 import com.example.demo.dto.ClienteDTO;
+import com.example.demo.dto.ClienteInserirDTO;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -53,6 +54,13 @@ public class Cliente {
     public Cliente() {}
     
     public Cliente(ClienteDTO cliente) {
+        this.nome = cliente.getNome();
+        this.email = cliente.getEmail();
+        this.telefone = cliente.getTelefone();
+        this.cpf = cliente.getCpf();
+    }
+
+    public Cliente(ClienteInserirDTO cliente) {
         this.nome = cliente.getNome();
         this.email = cliente.getEmail();
         this.telefone = cliente.getTelefone();

@@ -22,13 +22,13 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping("/categorias")
 public class CategoriaController {
-	
+
     private CategoriaService service;
 
     public CategoriaController(CategoriaService service) {
         this.service = service;
     }
-    
+
     @GetMapping
     public ResponseEntity<List<CategoriaDTO>> listar() {
         return ResponseEntity.ok(service.listarTodas());
@@ -41,23 +41,22 @@ public class CategoriaController {
 
     @PostMapping
     public ResponseEntity<CategoriaDTO> criar(@Valid @RequestBody CategoriaDTO dto) {
-    	CategoriaDTO novaCategoria = service.salvar(dto);
-    	URI uri = ServletUriComponentsBuilder
+        CategoriaDTO novaCategoria = service.salvar(dto);
+        URI uri = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{id}")
                 .buildAndExpand(novaCategoria.getId())
                 .toUri();
-    	
-    	return ResponseEntity.created(uri).body(novaCategoria);
+
+        return ResponseEntity.created(uri).body(novaCategoria);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CategoriaDTO> atualizar(@PathVariable Long id,@Valid @RequestBody CategoriaDTO dto) {
+    public ResponseEntity<CategoriaDTO> atualizar(@PathVariable Long id, @Valid @RequestBody CategoriaDTO dto) {
         CategoriaDTO atualizada = service.atualizar(id, dto);
         return ResponseEntity.ok(atualizada);
     }
 
-    
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletar(@PathVariable Long id) {
         service.deletar(id);
