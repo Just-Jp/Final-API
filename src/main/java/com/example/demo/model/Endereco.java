@@ -3,6 +3,7 @@ package com.example.demo.model;
 import org.hibernate.validator.constraints.Length;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import com.example.demo.dto.EnderecoDTO;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -30,7 +31,6 @@ public class Endereco {
     private String logradouro;
 
     @Column(nullable = false)
-    @NotBlank(message = "O complemento não pode estar vazio")
     @Schema(description = "Complemento do endereço", example = "lado ímpar")
     private String complemento;
 
@@ -49,6 +49,18 @@ public class Endereco {
     @Length(min = 2, max = 2, message = "O UF deve ter exatamente 2 caracteres")
     @Schema(description = "Unidade Federativa (UF)")
     private String uf;
+
+    public Endereco() {}
+
+    public Endereco(EnderecoDTO endereco) {
+        this.cep = endereco.getCep();
+        this.logradouro = endereco.getLogradouro();
+        this.complemento = endereco.getComplemento();
+        this.bairro = endereco.getBairro();
+        this.localidade = endereco.getLocalidade();
+        this.uf = endereco.getUf();
+        
+    }
 
     public Long getId() {
         return id;

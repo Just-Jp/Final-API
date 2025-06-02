@@ -1,6 +1,9 @@
 package com.example.demo.model;
 
+
 import io.swagger.v3.oas.annotations.media.Schema;
+
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -18,6 +21,7 @@ public class Categoria {
     private Long id;
     
     @Valid
+    @Column(nullable = false, unique = true)
     @NotBlank(message = "O nome da categoria não pode estar vazio")
     @Schema(description = "Nome da categoria")
     private String nome;

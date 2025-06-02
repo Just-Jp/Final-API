@@ -14,5 +14,7 @@ public enum Status {
     ENTREGUE,
     
     @Schema(description = "Pedido foi cancelado")
-    CANCELADO
+    CANCELADO;
 }
+
+

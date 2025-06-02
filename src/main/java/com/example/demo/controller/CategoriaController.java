@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import java.net.URI;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,14 +26,10 @@ import jakarta.validation.Valid;
 @RequestMapping("/categorias")
 @Tag(name = "Categoria", description = "Gerenciamento de categorias de produtos")
 public class CategoriaController {
-	
-	
-    private  CategoriaService service;
 
-    public CategoriaController(CategoriaService service) {
-        this.service = service;
-    }
-    
+    @Autowired
+    private CategoriaService service;
+
     @Operation(summary = "Listar todas as categorias")
     @GetMapping
     public ResponseEntity<List<CategoriaDTO>> listar() {
@@ -48,19 +45,19 @@ public class CategoriaController {
     @Operation(summary = "Criar nova categoria")
     @PostMapping
     public ResponseEntity<CategoriaDTO> criar(@Valid @RequestBody CategoriaDTO dto) {
-    	CategoriaDTO novaCategoria = service.salvar(dto);
-    	URI uri = ServletUriComponentsBuilder
+        CategoriaDTO novaCategoria = service.salvar(dto);
+        URI uri = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{id}")
                 .buildAndExpand(novaCategoria.getId())
                 .toUri();
-    	
-    	return ResponseEntity.created(uri).body(novaCategoria);
+
+        return ResponseEntity.created(uri).body(novaCategoria);
     }
 
     @Operation(summary = "atualizar uma categoria existente")
     @PutMapping("/{id}")
-    public ResponseEntity<CategoriaDTO> atualizar(@PathVariable Long id,@Valid @RequestBody CategoriaDTO dto) {
+    public ResponseEntity<CategoriaDTO> atualizar(@PathVariable Long id, @Valid @RequestBody CategoriaDTO dto) {
         CategoriaDTO atualizada = service.atualizar(id, dto);
         return ResponseEntity.ok(atualizada);
     }

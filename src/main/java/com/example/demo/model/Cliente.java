@@ -2,8 +2,11 @@ package com.example.demo.model;
 
 import java.util.List;
 
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.CascadeType;
+import com.example.demo.dto.ClienteDTO;
+import com.example.demo.dto.ClienteInserirDTO;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -11,8 +14,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 
@@ -49,15 +52,31 @@ public class Cliente {
     @Schema(description = "CPF do cliente")
     private String cpf;
 
-    @JoinColumn(name = "id_endereço", nullable = false)
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @Schema(description = "Endereço associado ao cliente")
+    @JoinColumn(name = "id_endereço", nullable = false)
+    @ManyToOne(fetch = FetchType.EAGER)
     private Endereco endereco;
 
     @Column
     @OneToMany(mappedBy = "cliente")
     @Schema(description = "Lista de pedidos associados ao cliente")
     private List<Pedido> pedidos;
+
+    public Cliente() {}
+    
+    public Cliente(ClienteDTO cliente) {
+        this.nome = cliente.getNome();
+        this.email = cliente.getEmail();
+        this.telefone = cliente.getTelefone();
+        this.cpf = cliente.getCpf();
+    }
+
+    public Cliente(ClienteInserirDTO cliente) {
+        this.nome = cliente.getNome();
+        this.email = cliente.getEmail();
+        this.telefone = cliente.getTelefone();
+        this.cpf = cliente.getCpf();
+    }
 
     public Long getId() {
         return id;

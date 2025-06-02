@@ -1,6 +1,8 @@
 package com.example.demo.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import com.example.demo.dto.ProdutoDTO;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -10,12 +12,12 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 @Entity
 @Schema(description = "Entidade que representa um produto vendido no sistema")
 public class Produto {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Schema(description = "Identificador único do produto")
@@ -27,7 +29,7 @@ public class Produto {
     private String nome;
 
     @Column(nullable = false)
-    @NotBlank(message = "O preço do produto não pode estar vazio")
+    @NotNull(message = "O preço do produto não pode estar vazio")
     @Min(value = 0, message = "O preço do produto deve ser maior ou igual a zero")
     @Schema(description = "Preço do produto")
     private double preco;
@@ -42,6 +44,9 @@ public class Produto {
     @Size(max = 30, message = "A descrição do produto não pode ter mais de 30 caracteres")
     @Schema(description = "Descrição curta do produto")
     private String descricao;
+    
+    @Column(nullable = false)
+    private boolean ativo; // Por padrão, o produto é ativo
 
     public Produto() {
     }
@@ -51,6 +56,16 @@ public class Produto {
         this.preco = preco;
         this.categoria = categoria;
         this.descricao = descricao;
+        this.ativo = true;
+       
+    }
+
+	public Produto(ProdutoDTO produtoDTO, Categoria categoria, boolean ativo) {
+        this.nome = produtoDTO.getNome();
+        this.preco = produtoDTO.getPreco();
+        this.categoria = categoria;
+        this.descricao = produtoDTO.getDescricao();
+        this.ativo = true;
     }
 
     public Long getId() {
@@ -92,4 +107,12 @@ public class Produto {
     public void setDescricao(String descricao) {
         this.descricao = descricao;
     }
+    
+    public boolean isAtivo() {
+		return ativo;
+	}
+
+	public void setAtivo(boolean ativo) {
+		this.ativo = ativo;
+	}
 }

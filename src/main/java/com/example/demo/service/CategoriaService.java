@@ -7,62 +7,68 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.CategoriaDTO;
+import com.example.demo.exception.TratamentoException;
 import com.example.demo.model.Categoria;
 import com.example.demo.repository.CategoriaRepository;
 
-	@Service
-	public class CategoriaService {
-	
-	
-		@Autowired
-	    private CategoriaRepository repository;
+@Service
+public class CategoriaService {
 
-	    public CategoriaService(CategoriaRepository repository) {
-	        this.repository = repository;
-	    }
+	@Autowired
+	private CategoriaRepository repository;
 
-	    public CategoriaDTO salvar(CategoriaDTO dto) {
-	        Categoria categoria = new Categoria();
-	        categoria.setNome(dto.getNome());
-	        categoria = repository.save(categoria);
-	        dto.setId(categoria.getId());
-	        return dto;
-	    }
+	public CategoriaDTO salvar(CategoriaDTO dto) {
+		if (repository.findByNome(dto.getNome()).isPresent()) {
+			throw new TratamentoException("Já existe uma categoria com esse nome.");
+		}
+		Categoria categoria = new Categoria();
+		categoria.setNome(dto.getNome());
+		categoria = repository.save(categoria);
+		dto.setId(categoria.getId());
+		return dto;
+	}
 
-	    public CategoriaDTO atualizar(Long id, CategoriaDTO dto) {
-	        Categoria categoria = repository.findById(id)
-	                .orElseThrow();
-	        categoria.setNome(dto.getNome());
-	        categoria = repository.save(categoria);
-	        return toDTO(categoria);
-	    }
+	public CategoriaDTO atualizar(Long id, CategoriaDTO dto) {
+        Categoria categoria = repository.findById(id)
+            	.orElseThrow(() -> new TratamentoException("Categoria não encontrada para atualização"));
+        if (repository.findByNome(dto.getNome()).isPresent()) {
+            throw new TratamentoException("Já existe uma categoria com esse nome.");
+        }
+        categoria.setNome(dto.getNome());
+        categoria = repository.save(categoria);
+        return toDTO(categoria);
+    }
 
-	    public List<CategoriaDTO> listarTodas() {
-	        return repository.findAll()
-	                .stream()
-	                .map(this::toDTO)
-	                .collect(Collectors.toList());
-	    }
+	public List<CategoriaDTO> listarTodas() {
+		return repository.findAll()
+				.stream()
+				.map(this::toDTO)
+				.collect(Collectors.toList());
+	}
 
-	    public CategoriaDTO buscarPorId(Long id) {
-	        Categoria categoria = repository.findById(id)
-	                .orElseThrow();
-	        return toDTO(categoria);
-	    }
+	public CategoriaDTO buscarPorId(Long id) {
+        Categoria categoria = repository.findById(id)
+                .orElseThrow(() -> new TratamentoException("Categoria não encontrada"));
+        return toDTO(categoria);
+    }
 
-	    public void deletar(Long id) {
-	        if (!repository.existsById(id)) {
-	        	throw new RuntimeException ();
-	        }
-	        repository.deleteById(id);
-	    }
+	public CategoriaDTO buscarPorNome(String nome) {
+        Categoria categoria = repository.findByNome(nome)
+            .orElseThrow(() -> new TratamentoException("Categoria não encontrada"));
+        return toDTO(categoria);
+    }
 
-	    private CategoriaDTO toDTO(Categoria categoria) {
-	        CategoriaDTO dto = new CategoriaDTO();
-	        dto.setId(categoria.getId());
-	        dto.setNome(categoria.getNome());
-	        return dto;
-	    }
+	public void deletar(Long id) {
+        if (!repository.existsById(id)) {
+            throw new TratamentoException("Categoria não encontrada para exclusão");
+        }
+        repository.deleteById(id);
+    }
+
+	private CategoriaDTO toDTO(Categoria categoria) {
+		CategoriaDTO dto = new CategoriaDTO();
+		dto.setId(categoria.getId());
+		dto.setNome(categoria.getNome());
+		return dto;
+	}
 }
-
-
