@@ -38,7 +38,7 @@ public class PedidoService {
 	private MailConfig mailConfig;
 	
 	@Autowired
-	private CupomDescontoRepository cupomDescRepo;
+	private CupomDescontoRepository cupomRepo;
 
 	@Autowired
 	private NotaFiscalConfig notaFiscalConfig;
@@ -60,12 +60,15 @@ public class PedidoService {
 
 	public PedidoDTO inserir(PedidoDTO pedidoDto) {
 		Pedido pedido = toEntity(pedidoDto);
+		if (pedidoDto.getCupom() != null) {
+			Double novoTotal = aplicarCupom(pedidoDto.getCupom(), pedido);
+			pedido.setValorTotal(novoTotal);
+		}
 		Pedido pedidoNovo = pedidoRepository.save(pedido);
 
 		mailConfig.sendEmail(pedidoNovo.getCliente().getEmail(), "Pedido realizado com sucesso",
 				"Olá " + pedidoNovo.getCliente().getNome()
 						+ ",\n\nSeu pedido foi realizado com sucesso!\n\nLoja Serratec!");
-
 		return new PedidoDTO(pedidoNovo);
 	}
 
@@ -111,8 +114,14 @@ public class PedidoService {
 					itens.add(pedidoProduto);
 				}
 			}
+
 			pedidoExistente.setItens(itens);
 			pedidoExistente.setValorTotal(calcularValorTotal(itens));
+
+			if (pedidoDto.getCupom() != null) {
+				Double novoTotal = aplicarCupom(pedidoDto.getCupom(), pedidoExistente);
+            	pedidoExistente.setValorTotal(novoTotal);
+        	}
 
 			mailConfig.sendEmail(pedidoExistente.getCliente().getEmail(), "Pedido atualizado com sucesso",
 					"Olá " + pedidoExistente.getCliente().getNome()
@@ -185,20 +194,15 @@ public class PedidoService {
 				.sum();
 	}
   
-  public Pedido aplicarCupom(String codigoCupom, String email, Pedido pedido) {
-		Optional<CupomDesconto> cupomOpt = cupomDescRepo.findByCodigoAndEmail(codigoCupom, email);
+  public Double aplicarCupom(String codigoCupom, Pedido pedido) {
+		Optional<CupomDesconto> cupomOpt = cupomRepo.findByCodigo(codigoCupom);
 		if(cupomOpt.isPresent() && cupomOpt.get().getAtivo()) {
 			CupomDesconto cupom = cupomOpt.get();
-			
-			double valorTotal = pedido.getItens().stream().mapToDouble(item -> item.getProduto().getPreco()*item.getQuantidade()).sum();
-			
-			double desconto = valorTotal*(cupom.getPercentual()/100.0);
-			pedido.setValorComDesconto(valorTotal - desconto);
-			
-			cupom.setAtivo(false);
-			cupomDescRepo.save(cupom);
-			
-			return pedidoRepository.save(pedido);
+
+			double novoValor = pedido.getValorTotal() * (1 - cupom.getPercentual() / 100);
+			cupomRepo.save(cupom);
+
+			return novoValor;
 		}
 		throw new RuntimeException("Cupom inválido ou expirado.");
 		}

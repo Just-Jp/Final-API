@@ -31,6 +31,8 @@ public class PedidoDTO {
 
 	private Double valorTotal;
 
+    private String cupom;
+
     public PedidoDTO(Pedido pedido) {
         this.cliente = pedido.getCliente().getNome();
         this.dataPedido = pedido.getDataPedido();
@@ -87,5 +89,13 @@ public class PedidoDTO {
 	public void setValorTotal(Double valorTotal) {
 		this.valorTotal = valorTotal;
 	}
+
+    public String getCupom() {
+        return cupom;
+    }
+
+    public void setCupom(String cupom) {
+        this.cupom = cupom;
+    }
 }
 
