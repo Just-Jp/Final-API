@@ -4,7 +4,9 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -57,12 +59,12 @@ public class PedidoController {
 
 	@PutMapping("/{id}")
 	public ResponseEntity<PedidoDTO> atualizar(@PathVariable Long id, @Valid @RequestBody PedidoDTO pedidoDTO) {
-        PedidoDTO pedidoAtualizado = pedidoService.atualizar(id, pedidoDTO);
-        if (pedidoAtualizado != null) {
-            return ResponseEntity.ok(pedidoAtualizado);
-        }
-        return ResponseEntity.notFound().build();
-    }
+		PedidoDTO pedidoAtualizado = pedidoService.atualizar(id, pedidoDTO);
+		if (pedidoAtualizado != null) {
+			return ResponseEntity.ok(pedidoAtualizado);
+		}
+		return ResponseEntity.notFound().build();
+	}
 
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Void> deletar(@PathVariable Long id) {
@@ -72,5 +74,20 @@ public class PedidoController {
 			return ResponseEntity.noContent().build();
 		}
 		return ResponseEntity.notFound().build();
+	}
+
+	@GetMapping("/{id}/nota-fiscal")
+	public ResponseEntity<byte[]> gerarNotaFiscal(@PathVariable Long id) throws Exception {
+		byte[] pdfBytes = pedidoService.gerarNotaFiscalJson(id);
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_PDF);
+		headers.setContentDispositionFormData("attachment", "nota_fiscal_pedido_" + id + ".pdf");
+		return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
+	}
+
+	@PostMapping("/{id}/nota-fiscal")
+	public ResponseEntity<String> gerarNotaFiscalLocal(@PathVariable Long id) throws Exception {
+		String caminho = pedidoService.gerarNotaFiscalLocal(id);
+		return ResponseEntity.ok("Nota fiscal gerada em: " + caminho);
 	}
 }

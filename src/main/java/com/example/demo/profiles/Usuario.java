@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.hibernate.validator.constraints.Length;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,7 +19,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
-import jakarta.validation.constraints.Pattern;
 
 @Entity
 public class Usuario implements UserDetails {
@@ -35,7 +35,7 @@ public class Usuario implements UserDetails {
     private String email;
 
     @Column(nullable = false)
-    @Pattern(regexp = "^[A-Za-z0-9@#$%^&+=]{10,}$", message = "Senha deve ter pelo menos 10 caracteres e conter letras, números e símbolos")
+    @Length(min = 6, message = "A senha deve ter no mínimo 6 caracteres")
     private String senha;
 
     @OneToMany(mappedBy = "id.usuario", fetch = FetchType.EAGER, cascade = CascadeType.ALL)

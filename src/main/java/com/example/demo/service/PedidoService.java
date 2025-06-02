@@ -11,6 +11,7 @@ import com.example.demo.dto.PedidoDTO;
 import com.example.demo.dto.PedidoProdutoDTO;
 import com.example.demo.exception.TratamentoException;
 import com.example.demo.mail.MailConfig;
+import com.example.demo.mail.NotaFiscalConfig;
 import com.example.demo.model.Cliente;
 import com.example.demo.model.Pedido;
 import com.example.demo.model.PedidoProduto;
@@ -34,6 +35,8 @@ public class PedidoService {
 	@Autowired
 	private MailConfig mailConfig;
 
+	@Autowired
+	private NotaFiscalConfig notaFiscalConfig;
 
 	public List<PedidoDTO> buscarTodos() {
 		List<Pedido> pedidos = pedidoRepository.findAll();
@@ -78,7 +81,8 @@ public class PedidoService {
 			pedidoExistente.setCliente(
 					clienteRepository.findByNome(pedidoDto.getCliente())
 							.orElseThrow(
-									() -> new TratamentoException("Cliente não encontrado: " + pedidoDto.getCliente())));
+									() -> new TratamentoException(
+											"Cliente não encontrado: " + pedidoDto.getCliente())));
 			pedidoExistente.setDataPedido(pedidoDto.getDataPedido());
 			pedidoExistente.setStatus(pedidoDto.getStatus());
 			pedidoExistente.getItens().clear();
@@ -87,7 +91,8 @@ public class PedidoService {
 			if (pedidoDto.getItens() != null) {
 				for (PedidoProdutoDTO itemDto : pedidoDto.getItens()) {
 					Produto produto = produtoRepository.findByNome(itemDto.getProduto())
-							.orElseThrow(() -> new TratamentoException("Produto não encontrado: " + itemDto.getProduto()));
+							.orElseThrow(
+									() -> new TratamentoException("Produto não encontrado: " + itemDto.getProduto()));
 					PedidoProduto pedidoProduto = new PedidoProduto();
 					pedidoProduto.setPedido(pedidoExistente);
 					pedidoProduto.setProduto(produto);
@@ -144,6 +149,22 @@ public class PedidoService {
 		return pedido;
 	}
 
+	public String gerarNotaFiscalLocal(Long id) throws Exception {
+		PedidoDTO pedido = buscarPorId(id);
+		if (pedido == null)
+			throw new TratamentoException("Pedido não encontrado");
+		String caminho = "nota_fiscal_pedido_" + id + ".pdf";
+		notaFiscalConfig.converterPdfArquivo(pedido, caminho);
+		return caminho;
+	}
+
+	public byte[] gerarNotaFiscalJson(Long id) throws Exception {
+		PedidoDTO pedido = buscarPorId(id);
+		if (pedido == null)
+			throw new TratamentoException("Pedido não encontrado");
+		return notaFiscalConfig.converterPdfJson(pedido);
+	}
+
 	public double calcularDesconto(double preco, double desconto) {
 		if (desconto < 0 || desconto > 100) {
 			throw new IllegalArgumentException("Desconto deve estar entre 0 e 100");
@@ -158,5 +179,4 @@ public class PedidoService {
 				.mapToDouble(PedidoProduto::getValorVenda)
 				.sum();
 	}
-
 }
