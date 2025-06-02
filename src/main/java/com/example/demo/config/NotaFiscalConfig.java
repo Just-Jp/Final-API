@@ -1,4 +1,4 @@
-package com.example.demo.mail;
+package com.example.demo.config;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;

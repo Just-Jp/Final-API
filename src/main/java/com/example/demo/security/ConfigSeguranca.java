@@ -35,10 +35,10 @@ public class ConfigSeguranca {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .httpBasic(Customizer.withDefaults())
                 .authorizeHttpRequests(requests -> {
-                    //requests.requestMatchers(HttpMethod.GET, "/pedidos").permitAll();
-                    //requests.requestMatchers(HttpMethod.GET, "/usuarios").hasRole("ADMIN");
+                    requests.requestMatchers(HttpMethod.GET, "/pedidos").permitAll();
+                    requests.requestMatchers(HttpMethod.GET, "/usuarios").hasRole("ADMIN");
                     //requests.requestMatchers(HttpMethod.POST, "/categorias").hasRole("GERENTE");
-                    requests.anyRequest().permitAll();//.authenticated();
+                    requests.anyRequest().authenticated();
                 })
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         http.addFilter(new JwtAutenticationFilter(

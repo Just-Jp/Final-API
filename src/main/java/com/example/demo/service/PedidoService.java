@@ -7,11 +7,11 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.example.demo.config.MailConfig;
+import com.example.demo.config.NotaFiscalConfig;
 import com.example.demo.dto.PedidoDTO;
 import com.example.demo.dto.PedidoProdutoDTO;
 import com.example.demo.exception.TratamentoException;
-import com.example.demo.mail.MailConfig;
-import com.example.demo.mail.NotaFiscalConfig;
 import com.example.demo.model.Cliente;
 import com.example.demo.model.Pedido;
 import com.example.demo.model.PedidoProduto;

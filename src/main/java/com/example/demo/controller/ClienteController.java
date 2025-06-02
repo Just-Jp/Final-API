@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.example.demo.dto.ClienteDTO;
+import com.example.demo.dto.ClienteInserirDTO;
 import com.example.demo.model.Cliente;
 import com.example.demo.service.ClienteService;
 
@@ -50,9 +51,8 @@ public class ClienteController {
     }
 
     @PostMapping
-    public ResponseEntity<ClienteDTO> inserir(@Valid @RequestBody ClienteDTO clienteDTO) {
-
-        ClienteDTO novoDTO = serv.inserir(clienteDTO);
+    public ResponseEntity<ClienteDTO> inserir(@Valid @RequestBody ClienteInserirDTO clienteInserirDTO) {
+        ClienteDTO novoDTO = serv.inserir(clienteInserirDTO);
 
         Cliente novoCliente = serv.buscarCpf(novoDTO.getCpf());
         URI uri = ServletUriComponentsBuilder

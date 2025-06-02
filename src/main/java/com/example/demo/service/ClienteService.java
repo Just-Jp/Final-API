@@ -9,10 +9,11 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.example.demo.config.MailConfig;
 import com.example.demo.dto.ClienteDTO;
+import com.example.demo.dto.ClienteInserirDTO;
 import com.example.demo.dto.UsuarioInserirDTO;
 import com.example.demo.exception.TratamentoException;
-import com.example.demo.mail.MailConfig;
 import com.example.demo.model.Cliente;
 import com.example.demo.model.Endereco;
 import com.example.demo.profiles.Perfil;
@@ -90,33 +91,35 @@ public class ClienteService {
         }).orElse(null);
     }
 
-    public ClienteDTO inserir(ClienteDTO clienteDTO) throws RuntimeException {
-
-        Optional<Cliente> cliente = repo.findByCpf(clienteDTO.getCpf());
+    public ClienteDTO inserir(ClienteInserirDTO clienteInserirDTO) throws RuntimeException {
+        // Checando por exceptions
+        Optional<Cliente> cliente = repo.findByCpf(clienteInserirDTO.getCpf());
         if (cliente.isPresent()) {
-            throw new TratamentoException("CPF já cadastrado: " + clienteDTO.getCpf());
+            throw new TratamentoException("CPF já cadastrado: " + clienteInserirDTO.getCpf());
         }
 
-        cliente = repo.findByEmail(clienteDTO.getEmail());
+        cliente = repo.findByEmail(clienteInserirDTO.getEmail());
         if (cliente.isPresent()) {
-            throw new TratamentoException("Email já cadastrado: " + clienteDTO.getEmail());
+            throw new TratamentoException("Email já cadastrado: " + clienteInserirDTO.getEmail());
         }
 
-        Cliente novoCliente = new Cliente(clienteDTO);
-        Endereco endereco = endServ.buscarCep(clienteDTO.getCep());
+        // Inserindo valores de cliente e endereco / salvando no banco
+        Cliente novoCliente = new Cliente(clienteInserirDTO);
+        Endereco endereco = endServ.buscarCep(clienteInserirDTO.getCep());
         if (endereco == null) {
-            endServ.buscar(clienteDTO.getCep());
-            endereco = endServ.buscarCep(clienteDTO.getCep());
+            endServ.buscar(clienteInserirDTO.getCep());
+            endereco = endServ.buscarCep(clienteInserirDTO.getCep());
         }
         novoCliente.setEndereco(endereco);
 
         Cliente adicionado = repo.save(novoCliente);
 
+        // Crio o usuario com a senha de objeto extra em ClienteInserirDTO
         UsuarioInserirDTO usuarioDTO = new UsuarioInserirDTO();
-        usuarioDTO.setNome(clienteDTO.getNome());
-        usuarioDTO.setEmail(clienteDTO.getEmail());
-        usuarioDTO.setSenha(clienteDTO.getCpf());
-        usuarioDTO.setConfirmaSenha(clienteDTO.getCpf());
+        usuarioDTO.setNome(clienteInserirDTO.getNome());
+        usuarioDTO.setEmail(clienteInserirDTO.getEmail());
+        usuarioDTO.setSenha(clienteInserirDTO.getSenha());
+        usuarioDTO.setConfirmaSenha(clienteInserirDTO.getConfirmaSenha());
 
         Set<Perfil> perfis = new HashSet<>();
         Perfil perfilCliente = perfilService.buscarPorNome("CLIENTE");
@@ -125,6 +128,7 @@ public class ClienteService {
 
         usuarioService.inserir(usuarioDTO);
 
+        // Pra finalizar, envio o email
         mailConfig.sendEmail(adicionado.getEmail(), "Cadastro realizado com sucesso",
                 "Olá " + adicionado.getNome() + ",\n\nSeu cadastro foi realizado com sucesso!\n\nLoja Serratec!");
         return new ClienteDTO(adicionado);
