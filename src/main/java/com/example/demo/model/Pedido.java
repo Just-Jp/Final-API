@@ -16,7 +16,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Schema(description = "Entidade que representa um pedido realizado por um cliente")
@@ -30,10 +30,9 @@ public class Pedido {
     @ManyToOne
     @Schema(description = "Cliente que realizou o pedido")
     private Cliente cliente;
+
     @Valid
     @Column(nullable = false)
-
-    @NotBlank(message = "A lista de produtos não pode estar vazia")
     @OneToMany
     @Schema(description = "Lista de produtos incluídos no pedido")
     private List<Produto> produtos;
@@ -43,7 +42,7 @@ public class Pedido {
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL)
     private List<PedidoProduto> itens;
   
-    @NotBlank(message = "A data do pedido não pode estar vazia")
+    @NotNull(message = "A data do pedido não pode estar vazia")
     @Schema(description = "Data em que o pedido foi realizado")
     @Column(nullable = false)
     private LocalDate dataPedido;

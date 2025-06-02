@@ -24,11 +24,6 @@ public class CupomDescontoService {
 		return cupomDescRepo.findById(id);
 	}
 	
-	public CupomDesconto inserir(CupomDesconto cupomDesc) {
-		CupomDesconto cupomDesconto = cupomDescRepo.save(cupomDesc);
-		return cupomDesc;
-	}
-	
 	public void deletar(Long id) {
 		cupomDescRepo.deleteById(id);
 	}

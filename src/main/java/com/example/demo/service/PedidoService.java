@@ -81,57 +81,57 @@ public class PedidoService {
 	}
 
 	public PedidoDTO atualizar(Long id, PedidoDTO pedidoDto) {
-		Optional<Pedido> pedidoOpt = pedidoRepository.findById(id);
-		if (pedidoOpt.isPresent()) {
-			Pedido pedidoExistente = pedidoOpt.get();
+    Optional<Pedido> pedidoOpt = pedidoRepository.findById(id);
+    if (pedidoOpt.isPresent()) {
+        Pedido pedidoExistente = pedidoOpt.get();
 
-			// Atualiza os campos básicos
-			pedidoExistente.setCliente(
-					clienteRepository.findByNome(pedidoDto.getCliente())
-							.orElseThrow(
-									() -> new TratamentoException(
-											"Cliente não encontrado: " + pedidoDto.getCliente())));
-			pedidoExistente.setDataPedido(pedidoDto.getDataPedido());
-			pedidoExistente.setStatus(pedidoDto.getStatus());
-			pedidoExistente.getItens().clear();
+        pedidoExistente.getItens().clear();
+        pedidoRepository.saveAndFlush(pedidoExistente); 
 
-			List<PedidoProduto> itens = new ArrayList<>();
-			if (pedidoDto.getItens() != null) {
-				for (PedidoProdutoDTO itemDto : pedidoDto.getItens()) {
-					Produto produto = produtoRepository.findByNome(itemDto.getProduto())
-							.orElseThrow(
-									() -> new TratamentoException("Produto não encontrado: " + itemDto.getProduto()));
-					PedidoProduto pedidoProduto = new PedidoProduto();
-					pedidoProduto.setPedido(pedidoExistente);
-					pedidoProduto.setProduto(produto);
-					pedidoProduto.setQuantidade(itemDto.getQuantidade());
-					pedidoProduto.setDesconto(itemDto.getDesconto());
+        // Atualiza os campos básicos
+        pedidoExistente.setCliente(
+                clienteRepository.findByNome(pedidoDto.getCliente())
+                        .orElseThrow(
+                                () -> new TratamentoException(
+                                        "Cliente não encontrado: " + pedidoDto.getCliente())));
+        pedidoExistente.setDataPedido(pedidoDto.getDataPedido());
+        pedidoExistente.setStatus(pedidoDto.getStatus());
 
-					// (Preco / Desconto) * Quantidade
-					double valorVenda = calcularDesconto(produto.getPreco(), itemDto.getDesconto());
+        List<PedidoProduto> itens = new ArrayList<>();
+        if (pedidoDto.getItens() != null) {
+            for (PedidoProdutoDTO itemDto : pedidoDto.getItens()) {
+                Produto produto = produtoRepository.findByNome(itemDto.getProduto())
+                        .orElseThrow(
+                                () -> new TratamentoException("Produto não encontrado: " + itemDto.getProduto()));
+                PedidoProduto pedidoProduto = new PedidoProduto();
+                pedidoProduto.setPedido(pedidoExistente);
+                pedidoProduto.setProduto(produto);
+                pedidoProduto.setQuantidade(itemDto.getQuantidade());
+                pedidoProduto.setDesconto(itemDto.getDesconto());
 
-					pedidoProduto.setValorVenda(valorVenda * itemDto.getQuantidade());
-					itens.add(pedidoProduto);
-				}
-			}
+                double valorVenda = calcularDesconto(produto.getPreco(), itemDto.getDesconto());
+                pedidoProduto.setValorVenda(valorVenda * itemDto.getQuantidade());
+                itens.add(pedidoProduto);
+            }
+        }
 
-			pedidoExistente.setItens(itens);
-			pedidoExistente.setValorTotal(calcularValorTotal(itens));
+        pedidoExistente.setItens(itens);
+        pedidoExistente.setValorTotal(calcularValorTotal(itens));
 
-			if (pedidoDto.getCupom() != null) {
-				Double novoTotal = aplicarCupom(pedidoDto.getCupom(), pedidoExistente);
-            	pedidoExistente.setValorTotal(novoTotal);
-        	}
+        if (pedidoDto.getCupom() != null) {
+            Double novoTotal = aplicarCupom(pedidoDto.getCupom(), pedidoExistente);
+            pedidoExistente.setValorTotal(novoTotal);
+        }
 
-			mailConfig.sendEmail(pedidoExistente.getCliente().getEmail(), "Pedido atualizado com sucesso",
-					"Olá " + pedidoExistente.getCliente().getNome()
-							+ ",\n\nSeu pedido foi atualizado com sucesso!\n\nLoja Serratec!");
+        mailConfig.sendEmail(pedidoExistente.getCliente().getEmail(), "Pedido atualizado com sucesso",
+                "Olá " + pedidoExistente.getCliente().getNome()
+                        + ",\n\nSeu pedido foi atualizado com sucesso!\n\nLoja Serratec!");
 
-			Pedido salvo = pedidoRepository.save(pedidoExistente);
-			return new PedidoDTO(salvo);
-		}
-		throw new TratamentoException("Pedido não encontrado");
-	}
+        Pedido salvo = pedidoRepository.save(pedidoExistente);
+        return new PedidoDTO(salvo);
+    }
+    throw new TratamentoException("Pedido não encontrado");
+}
 
 	public Pedido toEntity(PedidoDTO dto) {
 		Cliente cliente = clienteRepository.findByNome(dto.getCliente())
