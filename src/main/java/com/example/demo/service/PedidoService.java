@@ -13,10 +13,12 @@ import com.example.demo.dto.PedidoDTO;
 import com.example.demo.dto.PedidoProdutoDTO;
 import com.example.demo.exception.TratamentoException;
 import com.example.demo.model.Cliente;
+import com.example.demo.model.CupomDesconto;
 import com.example.demo.model.Pedido;
 import com.example.demo.model.PedidoProduto;
 import com.example.demo.model.Produto;
 import com.example.demo.repository.ClienteRepository;
+import com.example.demo.repository.CupomDescontoRepository;
 import com.example.demo.repository.PedidoRepository;
 import com.example.demo.repository.ProdutoRepository;
 
@@ -34,6 +36,9 @@ public class PedidoService {
 
 	@Autowired
 	private MailConfig mailConfig;
+	
+	@Autowired
+	private CupomDescontoRepository cupomDescRepo;
 
 	@Autowired
 	private NotaFiscalConfig notaFiscalConfig;
@@ -179,4 +184,22 @@ public class PedidoService {
 				.mapToDouble(PedidoProduto::getValorVenda)
 				.sum();
 	}
+  
+  public Pedido aplicarCupom(String codigoCupom, String email, Pedido pedido) {
+		Optional<CupomDesconto> cupomOpt = cupomDescRepo.findByCodigoAndEmail(codigoCupom, email);
+		if(cupomOpt.isPresent() && cupomOpt.get().getAtivo()) {
+			CupomDesconto cupom = cupomOpt.get();
+			
+			double valorTotal = pedido.getItens().stream().mapToDouble(item -> item.getProduto().getPreco()*item.getQuantidade()).sum();
+			
+			double desconto = valorTotal*(cupom.getPercentual()/100.0);
+			pedido.setValorComDesconto(valorTotal - desconto);
+			
+			cupom.setAtivo(false);
+			cupomDescRepo.save(cupom);
+			
+			return pedidoRepository.save(pedido);
+		}
+		throw new RuntimeException("Cupom inválido ou expirado.");
+		}
 }
