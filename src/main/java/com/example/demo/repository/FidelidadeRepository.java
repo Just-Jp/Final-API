@@ -7,5 +7,4 @@ import com.example.demo.model.Fidelidade;
 
 @Repository
 public interface FidelidadeRepository extends JpaRepository<Fidelidade, Long> {
-
 }

@@ -3,8 +3,8 @@ package com.example.demo.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.example.demo.controller.ResourceNotFoundException;
 import com.example.demo.dto.FidelidadeDTO;
+import com.example.demo.exception.TratamentoException;
 import com.example.demo.model.Cliente;
 import com.example.demo.model.Fidelidade;
 import com.example.demo.repository.ClienteRepository;
@@ -12,8 +12,6 @@ import com.example.demo.repository.FidelidadeRepository;
 
 @Service
 public class FidelidadeService {
-	
-	
 	@Autowired
     private FidelidadeRepository fidelidadeRepository;
 
@@ -22,14 +20,14 @@ public class FidelidadeService {
 
     public FidelidadeDTO consultarPontos(Long clienteId) {
         Fidelidade f = fidelidadeRepository.findById(clienteId)
-                .orElseThrow(() -> new ResourceNotFoundException("Cliente sem programa de fidelidade"));
+                .orElseThrow(() -> new TratamentoException("Cliente sem programa de fidelidade"));
 
         return toDTO(f);
     }
 
     public FidelidadeDTO adicionarPontos(Long clienteId, Integer pontosGanhos) {
         Fidelidade f = fidelidadeRepository.findById(clienteId)
-                .orElseThrow(() -> new ResourceNotFoundException("Cliente sem programa de fidelidade"));
+                .orElseThrow(() -> new TratamentoException("Cliente sem programa de fidelidade"));
 
         f.setPontos(f.getPontos() + pontosGanhos);
         fidelidadeRepository.save(f);
@@ -38,7 +36,7 @@ public class FidelidadeService {
 
     public FidelidadeDTO criarPrograma(Long clienteId) {
         Cliente cliente = clienteRepository.findById(clienteId)
-                .orElseThrow(() -> new ResourceNotFoundException("Cliente não encontrado"));
+                .orElseThrow(() -> new TratamentoException("Cliente não encontrado"));
 
         Fidelidade f = new Fidelidade();
         f.setCliente(cliente);

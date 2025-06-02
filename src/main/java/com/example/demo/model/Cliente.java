@@ -4,7 +4,6 @@ import java.util.List;
 
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.persistence.CascadeType;
 import com.example.demo.dto.ClienteDTO;
 import com.example.demo.dto.ClienteInserirDTO;
 import jakarta.persistence.Column;

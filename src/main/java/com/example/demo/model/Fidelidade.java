@@ -2,6 +2,8 @@ package com.example.demo.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
@@ -11,9 +13,9 @@ import jakarta.persistence.OneToOne;
 public class Fidelidade {
 
 	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Schema(description = "Identificador único do cliente (mesmo valor do ID do cliente)")
-    private Long clienteId;
-
+    private Long id;
     
     @OneToOne
     @JoinColumn(name = "cliente_id")
@@ -27,21 +29,17 @@ public class Fidelidade {
     }
     
 	public Fidelidade(Long clienteId, Cliente cliente, Integer pontos) {
-		super();
-		this.clienteId = clienteId;
+		this.id = clienteId;
 		this.cliente = cliente;
 		this.pontos = pontos;
 	}
 
-
-
-
-	public Long getClienteId() {
-		return clienteId;
+	public Long getId() {
+		return id;
 	}
 
-	public void setClienteId(Long clienteId) {
-		this.clienteId = clienteId;
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public Cliente getCliente() {

@@ -1,11 +1,11 @@
 package com.example.demo.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -16,7 +16,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 	@RestController
-	@RequestMapping("/api/fidelidade")
+	@RequestMapping("/fidelidade")
 	@Tag(name = "Fidelidade", description = "Operações relacionadas ao programa de fidelidade")
 	public class FidelidadeController {
 
@@ -24,9 +24,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 	    private FidelidadeService service;
 
 	    @Operation(summary = "Criar programa de fidelidade para um cliente")
-	    @PostMapping("/criar/{clienteId}")
+	    @PostMapping("/{clienteId}")
 	    public ResponseEntity<FidelidadeDTO> criar(@PathVariable Long clienteId) {
-	        return ResponseEntity.status(HttpStatus.CREATED).body(service.criarPrograma(clienteId));
+	        return ResponseEntity.ok(service.criarPrograma(clienteId));
 	    }
 
 	    @Operation(summary = "Consultar pontos de fidelidade do cliente")
@@ -36,7 +36,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 	    }
 
 	    @Operation(summary = "Adicionar pontos de fidelidade para o cliente")
-	    @PostMapping("/{clienteId}/ganhar/{pontos}")
+	    @PutMapping("/{clienteId}/ganhar/{pontos}")
 	    public ResponseEntity<FidelidadeDTO> ganharPontos(@PathVariable Long clienteId, @PathVariable Integer pontos) {
 	        return ResponseEntity.ok(service.adicionarPontos(clienteId, pontos));
 	    }
