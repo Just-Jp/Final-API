@@ -20,16 +20,23 @@ public class DiscontoController {
 
 		@Autowired
 		private CupomDescontoService CupomDescServ;
-		
+
 		@PostMapping("/ativar/{id}")
-		public ResponseEntity<CupomDesconto> ativarCupom(@PathVariable Long id){
+		public ResponseEntity<CupomDesconto> ativarCupom(@PathVariable Long id) {
 			CupomDesconto cupom = CupomDescServ.ativarCupom(id);
 			return ResponseEntity.ok(cupom);
 		}
-		
+
+		@PostMapping("/desativar/{id}")
+		public ResponseEntity<CupomDesconto> desativarCupom(@PathVariable Long id) {
+			CupomDesconto cupom = CupomDescServ.desativarCupom(id);
+			return ResponseEntity.ok(cupom);
+		}
 		@GetMapping("/validar")
-		public ResponseEntity<CupomDesconto> validarCupom(@RequestParam String email, @RequestParam String codigo){
-			return CupomDescServ.validarCupom(email, codigo).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+		public ResponseEntity<CupomDesconto> validarCupom(@RequestParam String codigo) {
+			return CupomDescServ.validarCupom(codigo)
+								.map(ResponseEntity::ok)
+								.orElse(ResponseEntity.notFound().build());
 		}
 	}
 }

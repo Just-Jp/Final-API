@@ -5,19 +5,15 @@ public class CupomDesconto {
 	private Long id;
 	private String codigo;
 	private Double percentual;
-	private String email;
 	private Boolean ativo = true;
 	
 	
-	public CupomDesconto(Long id, String codigo, Double percentual, String email, Boolean ativo) {
-		super();
+	public CupomDesconto(Long id, String codigo, Double percentual, Boolean ativo) {
 		this.id = id;
 		this.codigo = codigo;
 		this.percentual = percentual;
-		this.email = email;
 		this.ativo = ativo;
 	}
-
 
 	public Long getId() {
 		return id;
@@ -46,16 +42,6 @@ public class CupomDesconto {
 
 	public void setPercentual(Double percentual) {
 		this.percentual = percentual;
-	}
-
-
-	public String getEmail() {
-		return email;
-	}
-
-
-	public void setEmail(String email) {
-		this.email = email;
 	}
 
 

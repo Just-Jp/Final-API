@@ -12,13 +12,21 @@ public class CupomDescontoService {
 	@Autowired
 	private CupomDescontoRepository cupomDescRepo;
 	
-	public Optional<CupomDesconto> validarCupom(String email, String codigo){
-		return cupomDescRepo.findByCodigoAndEmail(codigo, email).filter(CupomDesconto::getAtivo);
+	public Optional<CupomDesconto> validarCupom(String codigo){
+		return cupomDescRepo.findByCodigo(codigo).filter(CupomDesconto::getAtivo);
 	}
+
+
 	
 	public CupomDesconto ativarCupom(Long id) {
 		CupomDesconto cupom = cupomDescRepo.findById(id).orElseThrow(() -> new RuntimeException("Cupom não encontrado"));
 		cupom.setAtivo(true);
+		return cupomDescRepo.save(cupom);
+	}
+
+	public CupomDesconto desativarCupom(Long id) {
+		CupomDesconto cupom = cupomDescRepo.findById(id).orElseThrow(() -> new RuntimeException("Cupom não encontrado"));
+		cupom.setAtivo(false);
 		return cupomDescRepo.save(cupom);
 	}
 }

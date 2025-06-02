@@ -3,8 +3,6 @@ package com.example.demo.model;
 import java.time.LocalDate;
 import java.util.List;
 
-import com.example.demo.dto.PedidoDTO;
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -16,8 +14,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
 
 @Entity
 public class Pedido {
@@ -39,11 +35,6 @@ public class Pedido {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Status status;
-
-    @Column(nullable = false)
-    @NotNull(message = "O preço do produto não pode estar vazio")
-    @Min(value = 0)
-    private Double valorComDesconto;
     
     @Column
     private Double valorTotal;
@@ -97,13 +88,4 @@ public class Pedido {
     public void setValorTotal(Double valorTotal) {
         this.valorTotal = valorTotal;
     }
-
-	public Double getValorComDesconto() {
-		return valorComDesconto;
-	}
-
-	public void setValorComDesconto(Double valorComDesconto) {
-		this.valorComDesconto = valorComDesconto;
-	}
-   
 }
