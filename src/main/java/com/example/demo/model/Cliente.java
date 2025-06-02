@@ -2,6 +2,7 @@ package com.example.demo.model;
 
 import java.util.List;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -16,37 +17,46 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 
 @Entity
+@Schema(description = "Entidade que representa um cliente do sistema")
 public class Cliente {
+	
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Schema(description = "Identificador único do cliente", example = "1")
     private Long id;
 
     @Column(nullable = false)
     @NotBlank(message = "O nome do cliente não pode estar vazio")
     @Pattern(regexp = "^[A-Za-zÀ-ÿ\\s]+$", message = "Nome inválido")
+    @Schema(description = "Nome completo do cliente")
     private String nome;
 
     @Column(nullable = false)
     @NotBlank(message = "O email do cliente não pode estar vazio")
     @Pattern(regexp = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$", message = "Email inválido")
+    @Schema(description = "Endereço de e-mail do cliente")
     private String email;
 
     @Column(nullable = false)
     @NotBlank(message = "O telefone do cliente não pode estar vazio")
     @Pattern(regexp = "^\\(?(\\d{2})\\)? ?(\\d{4,5}-?\\d{4})$", message = "Telefone inválido")
+    @Schema(description = "Número de telefone do cliente")
     private String telefone;
 
     @Column(nullable = false, unique = true)
     @NotBlank(message = "O CPF do cliente não pode estar vazio")
     @Pattern(regexp = "^(\\d{3}\\.?\\d{3}\\.?\\d{3}-?\\d{2})$", message = "CPF inválido")
+    @Schema(description = "CPF do cliente")
     private String cpf;
 
     @JoinColumn(name = "id_endereço", nullable = false)
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @Schema(description = "Endereço associado ao cliente")
     private Endereco endereco;
 
     @Column
     @OneToMany(mappedBy = "cliente")
+    @Schema(description = "Lista de pedidos associados ao cliente")
     private List<Pedido> pedidos;
 
     public Long getId() {

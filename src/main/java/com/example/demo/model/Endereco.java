@@ -2,6 +2,7 @@ package com.example.demo.model;
 
 import org.hibernate.validator.constraints.Length;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -10,34 +11,43 @@ import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotBlank;
 
 @Entity
+@Schema(description = "Entidade que representa o endereço do cliente")
 public class Endereco {
+	
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Schema(description = "Identificador único do endereço", example = "1")
     private Long id;
 
     @Column(nullable = false)
     @NotBlank(message = "O CEP não pode estar vazio")
+    @Schema(description = "Código de Endereçamento Postal")
     private String cep;
 
     @Column(nullable = false)
     @NotBlank(message = "O logradouro não pode estar vazio")
+    @Schema(description = "Nome da rua ou avenida")
     private String logradouro;
 
     @Column(nullable = false)
     @NotBlank(message = "O complemento não pode estar vazio")
+    @Schema(description = "Complemento do endereço", example = "lado ímpar")
     private String complemento;
 
     @Column(nullable = false)
     @NotBlank(message = "O bairro não pode estar vazio")
+    @Schema(description = "Bairro do endereço")
     private String bairro;
 
     @Column(nullable = false)
     @NotBlank(message = "A localidade não pode estar vazia")
+    @Schema(description = "Cidade ou município")
     private String localidade;
 
     @Column(nullable = false)
     @NotBlank(message = "O UF não pode estar vazio")
     @Length(min = 2, max = 2, message = "O UF deve ter exatamente 2 caracteres")
+    @Schema(description = "Unidade Federativa (UF)")
     private String uf;
 
     public Long getId() {

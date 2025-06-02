@@ -1,12 +1,15 @@
 package com.example.demo.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 
+@Schema(description = "DTO que representa uma categoria de produto")
 public class CategoriaDTO {
 
-	
+	@Schema(description = "ID da categoria")
     private Long id;
     
+	@Schema(description = "Nome da categoria")
     @NotBlank(message = "O nome da categoria é obrigatório")
     private String nome;
     

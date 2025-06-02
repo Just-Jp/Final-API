@@ -1,9 +1,14 @@
 package com.example.demo.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(description = "DTO que representa o programa de fidelidade de um cliente")
 public class FidelidadeDTO {
 	
+	@Schema(description = "ID do cliente")
 	private Long clienteId;
     
+	@Schema(description = "Quantidade de pontos acumulados pelo cliente")
 	private Integer pontos;
 
 	public FidelidadeDTO(Long clienteId, Integer pontos) {
