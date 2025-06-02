@@ -1,37 +1,34 @@
 package com.example.demo.dto;
-
-import com.example.demo.model.Pedido;
-
 import jakarta.validation.constraints.NotBlank;
 
 public class CupomRequestDTO {
-
-	private String email;
-	
 	@NotBlank(message = "Codigo é necessario")
 	private String codigo;
-	
-	private Pedido pedido;
+	private Double desconto;
+	private Boolean ativo = true;
 	
 	public CupomRequestDTO() {}
 	
-	public String getEmail() {
-		return email;
-	}
-	public void setEmail(String email) {
-		this.email = email;
-	}
 	public String getCodigo() {
 		return codigo;
 	}
 	public void setCodigo(String codigo) {
 		this.codigo = codigo;
 	}
-	public Pedido getPedido() {
-		return pedido;
+
+	public Double getDesconto() {
+		return desconto;
 	}
-	public void setPedido(Pedido pedido) {
-		this.pedido = pedido;
+
+	public void setDesconto(Double desconto) {
+		this.desconto = desconto;
 	}
-	
+
+	public Boolean getAtivo() {
+		return ativo;
+	}
+
+	public void setAtivo(Boolean ativo) {
+		this.ativo = ativo;
+	}	
 }
