@@ -1,5 +1,6 @@
 package com.example.demo.model;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import com.example.demo.dto.ProdutoDTO;
 
 import jakarta.persistence.Column;
@@ -15,27 +16,33 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 @Entity
+@Schema(description = "Entidade que representa um produto vendido no sistema")
 public class Produto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Schema(description = "Identificador único do produto")
     private Long id;
 
     @Column(nullable = false)
     @NotBlank(message = "O nome do produto não pode estar vazio")
+    @Schema(description = "Nome do produto")
     private String nome;
 
     @Column(nullable = false)
     @NotNull(message = "O preço do produto não pode estar vazio")
     @Min(value = 0, message = "O preço do produto deve ser maior ou igual a zero")
+    @Schema(description = "Preço do produto")
     private double preco;
 
     @ManyToOne
     @JoinColumn(nullable = false)
+    @Schema(description = "Categoria à qual o produto pertence")
     private Categoria categoria;
 
     @Column(nullable = false, length = 30)
     @NotBlank(message = "A descrição do produto não pode estar vazia")
     @Size(max = 30, message = "A descrição do produto não pode ter mais de 30 caracteres")
+    @Schema(description = "Descrição curta do produto")
     private String descricao;
     
     @Column(nullable = false)
@@ -52,8 +59,6 @@ public class Produto {
         this.ativo = true;
        
     }
-
-   
 
 	public Produto(ProdutoDTO produtoDTO, Categoria categoria, boolean ativo) {
         this.nome = produtoDTO.getNome();
