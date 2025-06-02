@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,23 @@ public class CupomDescontoService {
 
 	@Autowired
 	private CupomDescontoRepository cupomDescRepo;
+	
+	public List<CupomDesconto> listar() {
+		return cupomDescRepo.findAll();
+	}
+	
+	public Optional<CupomDesconto> buscar(Long id) {
+		return cupomDescRepo.findById(id);
+	}
+	
+	public CupomDesconto inserir(CupomDesconto cupomDesc) {
+		CupomDesconto cupomDesconto = cupomDescRepo.save(cupomDesc);
+		return cupomDesc;
+	}
+	
+	public void deletar(Long id) {
+		cupomDescRepo.deleteById(id);
+	}
 	
 	public Optional<CupomDesconto> validarCupom(String codigo){
 		return cupomDescRepo.findByCodigo(codigo).filter(CupomDesconto::getAtivo);
@@ -35,4 +53,6 @@ public class CupomDescontoService {
         CupomDesconto novoCupom = new CupomDesconto(dto);
         return cupomDescRepo.save(novoCupom);
     }
+    
+    
 }
