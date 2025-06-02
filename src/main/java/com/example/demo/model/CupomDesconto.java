@@ -18,7 +18,7 @@ public class CupomDesconto {
 	private Long id;
 	@Column(nullable = false, unique = true)
 	private String codigo;
-	@Length(min = 1, max = 100, message = "O desconto deve ser entre 1% e 100%")
+	@Length(min = 1, max = 10, message = "O desconto deve ser entre 1% e 10%")
 	private Double percentual;
 	private Boolean ativo = true;
 	
