@@ -1,5 +1,7 @@
 package com.example.demo.service;
 
+import com.example.demo.dto.EnderecoDTO;
+import com.example.demo.dto.HistoricoPrecoDTO;
 import com.example.demo.model.HistoricoPreco;
 import com.example.demo.model.Produto;
 import com.example.demo.repository.HistoricoPrecoRepository;
@@ -10,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class HistoricoPrecoService {
@@ -32,10 +35,14 @@ public class HistoricoPrecoService {
         return historicoPrecoRepository.save(historico);
     }
 
-    public List<HistoricoPreco> buscarPorProduto(Long produtoId) {
+    public List<HistoricoPrecoDTO> buscarPorProduto(Long produtoId) {
         Produto produto = produtoRepository.findById(produtoId)
                 .orElseThrow(() -> new IllegalArgumentException("Produto não encontrado com ID: " + produtoId));
 
-        return historicoPrecoRepository.findByProdutoOrderByDataAlteracaoDesc(produto);
+        List<HistoricoPreco> historicos = historicoPrecoRepository.findByProdutoOrderByDataAlteracaoDesc(produto);
+
+        return historicos.stream()
+                .map(HistoricoPrecoDTO::new)
+                .collect(Collectors.toList());
     }
 }

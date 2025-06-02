@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.HistoricoPrecoDTO;
 import com.example.demo.model.HistoricoPreco;
 import com.example.demo.service.HistoricoPrecoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,18 +16,9 @@ public class HistoricoPrecoController {
     @Autowired
     private HistoricoPrecoService historicoPrecoService;
 
-    @PostMapping
-    public ResponseEntity<HistoricoPreco> criarHistorico(@RequestBody HistoricoPreco historicoPreco) {
-        HistoricoPreco historico = historicoPrecoService.criarHistorico(
-                historicoPreco.getProduto().getId(),
-                historicoPreco.getPreco()
-        );
-        return ResponseEntity.ok(historico);
-    }
-
     @GetMapping("/{id}")
-    public ResponseEntity<List<HistoricoPreco>> buscarHistorico(@PathVariable Long id) {
-        List<HistoricoPreco> historicos = historicoPrecoService.buscarPorProduto(id);
-        return ResponseEntity.ok(historicos);
+    public ResponseEntity<List<HistoricoPrecoDTO>> buscarHistoricoPorProduto(@PathVariable Long id) {
+        List<HistoricoPrecoDTO> historicoDTOs = historicoPrecoService.buscarPorProduto(id);
+        return ResponseEntity.ok(historicoDTOs);
     }
 }
