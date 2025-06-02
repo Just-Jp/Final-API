@@ -1,7 +1,6 @@
 package com.example.demo.model;
 
 import jakarta.persistence.*;
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -16,7 +15,7 @@ public class HistoricoPreco {
     private Produto produto;
 
     @Column(nullable = false)
-    private BigDecimal preco;
+    private Double preco;
 
     @Column(nullable = false)
     private LocalDateTime dataAlteracao;
@@ -37,11 +36,11 @@ public class HistoricoPreco {
         this.produto = produto;
     }
 
-    public BigDecimal getPreco() {
+    public double getPreco() {
         return preco;
     }
 
-    public void setPreco(BigDecimal preco) {
+    public void setPreco(double preco) {
         this.preco = preco;
     }
 

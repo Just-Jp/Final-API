@@ -7,9 +7,7 @@ import com.example.demo.repository.ProdutoRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -22,12 +20,7 @@ public class HistoricoPrecoService {
     @Autowired
     private ProdutoRepository produtoRepository;
 
-    public HistoricoPrecoService(HistoricoPrecoRepository historicoPrecoRepository, ProdutoRepository produtoRepository) {
-        this.historicoPrecoRepository = historicoPrecoRepository;
-        this.produtoRepository = produtoRepository;
-    }
-
-    public HistoricoPreco criarHistorico(Long produtoId, BigDecimal preco) {
+    public HistoricoPreco criarHistorico(Long produtoId, Double preco) {
         Produto produto = produtoRepository.findById(produtoId)
                 .orElseThrow(() -> new EntityNotFoundException("Produto não encontrado com ID: " + produtoId));
 

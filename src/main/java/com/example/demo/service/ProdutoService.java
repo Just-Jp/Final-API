@@ -23,6 +23,9 @@ public class ProdutoService {
     @Autowired
     private CategoriaRepository categoriaRepository;
 
+    @Autowired
+    private HistoricoPrecoService precoServ;
+
     public List<ProdutoDTO> listar() {
         List<ProdutoDTO> produtosDTO = produtoRepository.findAll().stream()
                 .map(produto -> new ProdutoDTO(produto))
@@ -43,6 +46,8 @@ public class ProdutoService {
         categoriaRepository.findByNome(produtoDTO.getCategoria())
                 .orElseThrow(() -> new TratamentoException("Categoria não encontrada: " + produtoDTO.getCategoria()));
         Produto salvo = produtoRepository.save(produto);
+        precoServ.criarHistorico(salvo.getId(), salvo.getPreco());
+
         return new ProdutoDTO(salvo);
     }
 
@@ -58,7 +63,9 @@ public class ProdutoService {
             produtoExistente.setPreco(produtoDTO.getPreco());
             produtoExistente.setCategoria(categoria);
             produtoExistente.setDescricao(produtoDTO.getDescricao());
+
             Produto atualizado = produtoRepository.save(produtoExistente);
+            precoServ.criarHistorico(atualizado.getId(), atualizado.getPreco());
             return new ProdutoDTO(atualizado);
         }
         throw new TratamentoException("Produto não encontrado para atualização");

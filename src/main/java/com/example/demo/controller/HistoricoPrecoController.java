@@ -9,19 +9,14 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("historico-precos")
+@RequestMapping("/historico-precos")
 public class HistoricoPrecoController {
 
     @Autowired
     private HistoricoPrecoService historicoPrecoService;
 
-    public HistoricoPrecoController(HistoricoPrecoService historicoPrecoService) {
-        this.historicoPrecoService = historicoPrecoService;
-    }
-
     @PostMapping
-    public ResponseEntity<HistoricoPreco> criarHistorico(
-            @RequestBody HistoricoPreco historicoPreco) {
+    public ResponseEntity<HistoricoPreco> criarHistorico(@RequestBody HistoricoPreco historicoPreco) {
         HistoricoPreco historico = historicoPrecoService.criarHistorico(
                 historicoPreco.getProduto().getId(),
                 historicoPreco.getPreco()
@@ -29,9 +24,9 @@ public class HistoricoPrecoController {
         return ResponseEntity.ok(historico);
     }
 
-    @GetMapping
-    public ResponseEntity<List<HistoricoPreco>> buscarHistorico(@RequestParam Long produtoId) {
-        List<HistoricoPreco> historicos = historicoPrecoService.buscarPorProduto(produtoId);
+    @GetMapping("/{id}")
+    public ResponseEntity<List<HistoricoPreco>> buscarHistorico(@PathVariable Long id) {
+        List<HistoricoPreco> historicos = historicoPrecoService.buscarPorProduto(id);
         return ResponseEntity.ok(historicos);
     }
 }

@@ -81,12 +81,4 @@ public class ProdutoController {
         ProdutoDTO produtoDTO = produtoService.reativar(id);
         return ResponseEntity.ok(produtoDTO);
     }
-    
-    @GetMapping("/ativos")
-    public ResponseEntity<List<ProdutoDTO>> listarAtivos() {
-        List<ProdutoDTO> produtosAtivos = produtoService.listarAtivo();
-        return ResponseEntity.ok(produtosAtivos);
-    }
-    
-    
 }
