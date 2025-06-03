@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.config.MailConfig;
@@ -21,6 +22,7 @@ import com.example.demo.repository.ClienteRepository;
 import com.example.demo.repository.CupomDescontoRepository;
 import com.example.demo.repository.PedidoRepository;
 import com.example.demo.repository.ProdutoRepository;
+import com.example.demo.security.JwtUtil;
 
 @Service
 public class PedidoService {
@@ -53,9 +55,14 @@ public class PedidoService {
 	}
 
 	public PedidoDTO buscarPorId(Long id) {
-		return pedidoRepository.findById(id)
-				.map(PedidoDTO::new)
-				.orElse(null);
+		Pedido pedido = pedidoRepository.findById(id).orElse(null);
+		String emailLogado = JwtUtil.getEmailUsuarioLogado();
+		boolean isCliente = SecurityContextHolder.getContext().getAuthentication().getAuthorities()
+	        .stream().anyMatch(a -> a.getAuthority().equals("ROLE_CLIENTE"));
+	    if (isCliente && pedido != null && !pedido.getCliente().getEmail().equals(emailLogado)) {
+	        throw new TratamentoException("Acesso negado");
+	    }
+	    return pedido != null ? new PedidoDTO(pedido) : null;
 	}
 
 	public PedidoDTO inserir(PedidoDTO pedidoDto) {
@@ -73,6 +80,13 @@ public class PedidoService {
 	}
 
 	public void deletar(Long id) {
+		Pedido pedido = pedidoRepository.findById(id).orElse(null);
+	    String emailLogado = JwtUtil.getEmailUsuarioLogado();
+	    boolean isCliente = SecurityContextHolder.getContext().getAuthentication().getAuthorities()
+	        .stream().anyMatch(a -> a.getAuthority().equals("ROLE_CLIENTE"));
+	    if (isCliente && pedido != null && !pedido.getCliente().getEmail().equals(emailLogado)) {
+	        throw new TratamentoException("Acesso negado");
+	    }
 		if (pedidoRepository.existsById(id)) {
 			pedidoRepository.deleteById(id);
 		} else {
@@ -81,57 +95,64 @@ public class PedidoService {
 	}
 
 	public PedidoDTO atualizar(Long id, PedidoDTO pedidoDto) {
-    Optional<Pedido> pedidoOpt = pedidoRepository.findById(id);
-    if (pedidoOpt.isPresent()) {
-        Pedido pedidoExistente = pedidoOpt.get();
+		Pedido pedidoExistente = pedidoRepository.findById(id).orElse(null);
+	    String emailLogado = JwtUtil.getEmailUsuarioLogado();
+	    boolean isCliente = SecurityContextHolder.getContext().getAuthentication().getAuthorities()
+	        .stream().anyMatch(a -> a.getAuthority().equals("ROLE_CLIENTE"));
+	    if (isCliente && pedidoExistente != null && !pedidoExistente.getCliente().getEmail().equals(emailLogado)) {
+	        throw new TratamentoException("Acesso negado");
+	    }
+	    Optional<Pedido> pedidoOpt = pedidoRepository.findById(id);
+	    if (pedidoOpt.isPresent()) {
+	        Pedido pedido = pedidoOpt.get();
 
-        pedidoExistente.getItens().clear();
-        pedidoRepository.saveAndFlush(pedidoExistente); 
+	        pedido.getItens().clear();
+	        pedidoRepository.saveAndFlush(pedido); 
 
-        // Atualiza os campos básicos
-        pedidoExistente.setCliente(
-                clienteRepository.findByNome(pedidoDto.getCliente())
-                        .orElseThrow(
-                                () -> new TratamentoException(
-                                        "Cliente não encontrado: " + pedidoDto.getCliente())));
-        pedidoExistente.setDataPedido(pedidoDto.getDataPedido());
-        pedidoExistente.setStatus(pedidoDto.getStatus());
+	        // Atualiza os campos básicos
+	        pedido.setCliente(
+	                clienteRepository.findByNome(pedidoDto.getCliente())
+	                        .orElseThrow(
+	                                () -> new TratamentoException(
+	                                        "Cliente não encontrado: " + pedidoDto.getCliente())));
+	        pedido.setDataPedido(pedidoDto.getDataPedido());
+	        pedido.setStatus(pedidoDto.getStatus());
 
-        List<PedidoProduto> itens = new ArrayList<>();
-        if (pedidoDto.getItens() != null) {
-            for (PedidoProdutoDTO itemDto : pedidoDto.getItens()) {
-                Produto produto = produtoRepository.findByNome(itemDto.getProduto())
-                        .orElseThrow(
-                                () -> new TratamentoException("Produto não encontrado: " + itemDto.getProduto()));
-                PedidoProduto pedidoProduto = new PedidoProduto();
-                pedidoProduto.setPedido(pedidoExistente);
-                pedidoProduto.setProduto(produto);
-                pedidoProduto.setQuantidade(itemDto.getQuantidade());
-                pedidoProduto.setDesconto(itemDto.getDesconto());
+	        List<PedidoProduto> itens = new ArrayList<>();
+	        if (pedidoDto.getItens() != null) {
+	            for (PedidoProdutoDTO itemDto : pedidoDto.getItens()) {
+	                Produto produto = produtoRepository.findByNome(itemDto.getProduto())
+	                        .orElseThrow(
+	                                () -> new TratamentoException("Produto não encontrado: " + itemDto.getProduto()));
+	                PedidoProduto pedidoProduto = new PedidoProduto();
+	                pedidoProduto.setPedido(pedido);
+	                pedidoProduto.setProduto(produto);
+	                pedidoProduto.setQuantidade(itemDto.getQuantidade());
+	                pedidoProduto.setDesconto(itemDto.getDesconto());
 
-                double valorVenda = calcularDesconto(produto.getPreco(), itemDto.getDesconto());
-                pedidoProduto.setValorVenda(valorVenda * itemDto.getQuantidade());
-                itens.add(pedidoProduto);
-            }
-        }
+	                double valorVenda = calcularDesconto(produto.getPreco(), itemDto.getDesconto());
+	                pedidoProduto.setValorVenda(valorVenda * itemDto.getQuantidade());
+	                itens.add(pedidoProduto);
+	            }
+	        }
 
-        pedidoExistente.setItens(itens);
-        pedidoExistente.setValorTotal(calcularValorTotal(itens));
+	        pedido.setItens(itens);
+	        pedido.setValorTotal(calcularValorTotal(itens));
 
-        if (pedidoDto.getCupom() != null) {
-            Double novoTotal = aplicarCupom(pedidoDto.getCupom(), pedidoExistente);
-            pedidoExistente.setValorTotal(novoTotal);
-        }
+	        if (pedidoDto.getCupom() != null) {
+	            Double novoTotal = aplicarCupom(pedidoDto.getCupom(), pedido);
+	            pedido.setValorTotal(novoTotal);
+	        }
 
-        mailConfig.sendEmail(pedidoExistente.getCliente().getEmail(), "Pedido atualizado com sucesso",
-                "Olá " + pedidoExistente.getCliente().getNome()
-                        + ",\n\nSeu pedido foi atualizado com sucesso!\n\nLoja Serratec!");
+	        mailConfig.sendEmail(pedido.getCliente().getEmail(), "Pedido atualizado com sucesso",
+	                "Olá " + pedido.getCliente().getNome()
+	                        + ",\n\nSeu pedido foi atualizado com sucesso!\n\nLoja Serratec!");
 
-        Pedido salvo = pedidoRepository.save(pedidoExistente);
-        return new PedidoDTO(salvo);
-    }
-    throw new TratamentoException("Pedido não encontrado");
-}
+	        Pedido salvo = pedidoRepository.save(pedido);
+	        return new PedidoDTO(salvo);
+	    }
+	    throw new TratamentoException("Pedido não encontrado");
+	}
 
 	public Pedido toEntity(PedidoDTO dto) {
 		Cliente cliente = clienteRepository.findByNome(dto.getCliente())

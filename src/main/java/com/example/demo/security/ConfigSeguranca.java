@@ -5,7 +5,6 @@ import java.util.Arrays;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -35,10 +34,12 @@ public class ConfigSeguranca {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .httpBasic(Customizer.withDefaults())
                 .authorizeHttpRequests(requests -> {
-                    requests.requestMatchers(HttpMethod.GET, "/pedidos").permitAll();
-                    requests.requestMatchers(HttpMethod.GET, "/usuarios").hasRole("ADMIN");
-                    //requests.requestMatchers(HttpMethod.POST, "/categorias").hasRole("GERENTE");
-                    requests.anyRequest().authenticated();
+                    requests.requestMatchers("/**").hasRole("GERENTE");
+                    requests.requestMatchers("/produtos/**", "/cupons/**", "/enderecos/**", "/categorias/**",
+                            "/fidelidade/**", "/historico-precos/**")
+                            .hasAnyRole("FUNCIONARIO", "GERENTE");
+                    requests.requestMatchers("/pedidos/**", "/clientes/**", "/wishlists/**")
+                            .hasAnyRole("CLIENTE", "FUNCIONARIO", "GERENTE");
                 })
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         http.addFilter(new JwtAutenticationFilter(

@@ -18,6 +18,7 @@ import com.example.demo.model.Cliente;
 import com.example.demo.model.Endereco;
 import com.example.demo.profiles.Perfil;
 import com.example.demo.repository.ClienteRepository;
+import com.example.demo.security.JwtUtil;
 
 @Service
 public class ClienteService {
@@ -45,9 +46,12 @@ public class ClienteService {
     }
 
     public ClienteDTO buscarPorId(Long id) {
-        return repo.findById(id)
-                .map(ClienteDTO::new)
-                .orElse(null);
+        Cliente cliente = repo.findById(id).orElse(null);
+        if (cliente == null) {
+            throw new TratamentoException("Cliente não encontrado");
+        }
+        JwtUtil.validarAcessoCliente(cliente.getEmail());
+        return new ClienteDTO(cliente);
     }
 
     public ClienteDTO buscarPorCpf(String cpf) {
@@ -57,6 +61,8 @@ public class ClienteService {
     }
 
     public ClienteDTO atualizar(Long id, ClienteDTO clienteDTO) {
+        Cliente cliente = repo.findById(id).orElse(null);
+        JwtUtil.validarAcessoCliente(cliente.getEmail());
 
         Optional<Cliente> clienteCpf = repo.findByCpf(clienteDTO.getCpf());
         if (clienteCpf.isPresent() && !clienteCpf.get().getId().equals(id)) {
@@ -135,6 +141,8 @@ public class ClienteService {
     }
 
     public void deletar(Long id) {
+        Cliente cliente = repo.findById(id).orElse(null);
+        JwtUtil.validarAcessoCliente(cliente.getEmail());
         if (repo.existsById(id)) {
             repo.deleteById(id);
         } else {
