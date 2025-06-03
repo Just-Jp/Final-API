@@ -4,12 +4,24 @@ import java.util.Set;
 
 import com.example.demo.profiles.Perfil;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(description="DTO para inserir um usuário")
 public class UsuarioInserirDTO {
     
+    @Schema(description="Nome do usuário")
     private String nome;
+    
+    @Schema(description="Email do usuário")
     private String email;
+    
+    @Schema(description="Senha do usuário")
     private String senha;
+    
+    @Schema(description="Confirmação da senha do usuário")
     private String confirmaSenha;
+    
+    @Schema(description="Perfis do usuário")
     private Set<Perfil> perfis;
     
     

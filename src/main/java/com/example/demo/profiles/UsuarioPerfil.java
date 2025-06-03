@@ -1,20 +1,24 @@
 package com.example.demo.profiles;
 
+import java.time.LocalDate;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 
-import java.time.LocalDate;
-
 @Entity
 @Table(name = "usuario_perfil")
+@Schema(description="Entidade que representa a associação entre um usuário e um perfil")
 public class UsuarioPerfil {
 
     @EmbeddedId
+    @Schema(description="ID que representa a associação entre usuário e perfil")
     private UsuarioPerfilPK id = new UsuarioPerfilPK();
 
     @Column(name = "data-criacao")
+    @Schema(description="Data de criação da associação entre usuário e perfil")
     private LocalDate dataCriacao;
 
     public UsuarioPerfil() {}

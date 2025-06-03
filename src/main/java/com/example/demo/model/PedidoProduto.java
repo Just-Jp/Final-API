@@ -1,25 +1,41 @@
 package com.example.demo.model;
 
-import jakarta.persistence.*;
 import java.io.Serializable;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.EmbeddedId;
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.MapsId;
+
 @Entity
+@Schema(description="Entidade que representa a relação entre um pedido e um produto")
 public class PedidoProduto implements Serializable {
+    
     @EmbeddedId
+    @Schema(description="ID composto entre pedido e produto")
     private PedidoProdutoId id = new PedidoProdutoId();
 
     @ManyToOne
     @MapsId("pedidoId")
     @JoinColumn(name = "pedido_id")
+    @Schema(description="Pedido ao qual o produto pertence")
     private Pedido pedido;
 
     @ManyToOne
     @MapsId("produtoId")
     @JoinColumn(name = "produto_id")
+    @Schema(description="Produto incluído no pedido")
     private Produto produto;
 
+    @Schema(description="Valor de venda do produto no pedido")
     private Double valorVenda;
+
+    @Schema(description="Desconto aplicado ao produto no pedido")
     private Double desconto;
+
+    @Schema(description="Quantidade do produto no pedido")
     private Integer quantidade;
 
     public PedidoProduto() {}

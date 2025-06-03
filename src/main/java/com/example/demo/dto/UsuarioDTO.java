@@ -7,11 +7,21 @@ import com.example.demo.profiles.Perfil;
 import com.example.demo.profiles.Usuario;
 import com.example.demo.profiles.UsuarioPerfil;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(description="DTO que representa um usuário")
 public class UsuarioDTO {
 
+    @Schema(description="ID do usuário")
     private Long id;
+    
+    @Schema(description="Nome do usuário")
     private String nome;
+    
+    @Schema(description="Email do usuário")
     private String email;
+    
+    @Schema(description="Perfis do usuário")
     private Set<Perfil> perfis;
 
     public UsuarioDTO(Long id, String nome, String email) {

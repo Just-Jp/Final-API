@@ -2,6 +2,7 @@ package com.example.demo.model;
 
 import com.example.demo.dto.CupomRequestDTO;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -11,16 +12,24 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 
 @Entity
+@Schema(description="Entidade que representa um cupom de desconto")
 public class CupomDesconto {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Schema(description="ID do cupom de desconto")
 	private Long id;
+
 	@Column(nullable = false, unique = true)
+	@Schema(description="Código do cupom de desconto", example="DESCONTO10")
 	private String codigo;
+	
 	@Min(value = 0, message = "O desconto deve ser no mínimo 0")
 	@Max(value = 100, message = "O desconto deve ser no máximo 100")
+	@Schema(description="Percentual de desconto do cupom")
 	private Double percentual;
+	
+	@Schema(description="Indica se o cupom está ativo ou não")
 	private Boolean ativo = true;
 
 	public CupomDesconto() {

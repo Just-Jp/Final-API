@@ -17,7 +17,7 @@ public class Endereco {
 	
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Schema(description = "Identificador único do endereço", example = "1")
+    @Schema(description = "Identificador único do endereço")
     private Long id;
 
     @Column(nullable = false)

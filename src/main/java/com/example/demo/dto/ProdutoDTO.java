@@ -2,10 +2,21 @@ package com.example.demo.dto;
 
 import com.example.demo.model.Produto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(description="DTO que representa um produto")
 public class ProdutoDTO {
+    
+    @Schema(description="Nome do produto")
     private String nome;
+    
+    @Schema(description="Preço do produto")
     private Double preco;
+    
+    @Schema(description="Categoria do produto")
     private String categoria;
+    
+    @Schema(description="Descrição do produto")
     private String descricao;
 
     public ProdutoDTO() {

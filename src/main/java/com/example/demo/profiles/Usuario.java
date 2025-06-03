@@ -11,6 +11,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -21,24 +22,30 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 
 @Entity
+@Schema(description="Entidade que representa um usuário do sistema")
 public class Usuario implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_usuario")
+    @Schema(description="ID do usuário")
     private Long id;
 
     @Column(nullable = false)
+    @Schema(description="Nome do usuário")
     private String nome;
 
     @Column(nullable = false, unique = true)
+    @Schema(description="Email do usuário")
     private String email;
 
     @Column(nullable = false)
     @Length(min = 6, message = "A senha deve ter no mínimo 6 caracteres")
+    @Schema(description="Senha do usuário")
     private String senha;
 
     @OneToMany(mappedBy = "id.usuario", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @Schema(description="Perfis associados ao usuário")
     private Set<UsuarioPerfil> usuarioPerfis = new HashSet<>();
 
     public Usuario() {

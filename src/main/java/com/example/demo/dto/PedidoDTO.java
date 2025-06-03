@@ -7,30 +7,38 @@ import java.util.stream.Collectors;
 import com.example.demo.model.Pedido;
 import com.example.demo.model.Status;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
+@Schema(description="DTO que representa um pedido")
 public class PedidoDTO {
 
 	@Valid
     @NotNull(message = "O cliente não pode estar vazio")
+    @Schema(description="Nome do cliente que fez o pedido")
     private String cliente;
 
 	@Valid
     @NotEmpty(message = "A lista de produtos não pode estar vazia")
+    @Schema(description="Lista de produtos do pedido")
     private List<PedidoProdutoDTO> itens;
 
 	@Valid
     @NotNull(message = "O status do pedido não pode estar vazio")
+    @Schema(description="Status atual do pedido")
     private Status status;
 
 	@Valid
     @NotNull(message = "A data do pedido não pode estar vazia")
+    @Schema(description="Data em que o pedido foi realizado")
     private LocalDate dataPedido;
 
+    @Schema(description="Valor total do pedido")
 	private Double valorTotal;
 
+    @Schema(description="Cupom de desconto aplicado ao pedido")
     private String cupom;
 
     public PedidoDTO(Pedido pedido) {

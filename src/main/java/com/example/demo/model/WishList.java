@@ -2,7 +2,7 @@ package com.example.demo.model;
 
 import java.util.List;
 
-
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -13,17 +13,21 @@ import jakarta.persistence.ManyToOne;
 
 
 @Entity
+@Schema(description="Entidade que representa uma lista de desejos de um cliente")
 public class WishList {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Schema(description="ID da lista de desejos")
     private Long id;
     
     @ManyToOne
     @JoinColumn(nullable = false)
+    @Schema(description="Cliente dono da lista de desejos")
     private Cliente cliente;
 
     @ManyToMany
+    @Schema(description="Lista de produtos desejados")
     private List<Produto> produtos;
 
     

@@ -23,7 +23,7 @@ import jakarta.validation.constraints.NotNull;
 public class Pedido {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Schema(description = "Identificador único do pedido", example = "1")
+    @Schema(description = "Identificador único do pedido")
     private Long id;
 
     @JoinColumn(name = "id_cliente", nullable = false)

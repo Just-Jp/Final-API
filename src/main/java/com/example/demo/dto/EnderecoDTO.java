@@ -2,12 +2,27 @@ package com.example.demo.dto;
 
 import com.example.demo.model.Endereco;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(description="DTO que representa um endereço para uma inserção ou atualização")
 public class EnderecoDTO {
+    
+    @Schema(description="CEP do endereço")
     private String cep;
+
+    @Schema(description="Logradouro do endereço")
     private String logradouro;
+
+    @Schema(description="Complemento do endereço")
     private String complemento;
+
+    @Schema(description="Bairro do endereço")
     private String bairro;
+
+    @Schema(description="Localidade do endereço")
     private String localidade;
+
+    @Schema(description="Unidade Federativa do endereço")
     private String uf;
 
     public EnderecoDTO(Endereco endereco) {

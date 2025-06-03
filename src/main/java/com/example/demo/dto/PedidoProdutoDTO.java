@@ -1,9 +1,20 @@
 package com.example.demo.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(description="DTO que representa as credenciais de login de um usuário")
 public class PedidoProdutoDTO {
+    
+    @Schema(description="Nome do produto no pedido")
     private String produto;
+    
+    @Schema(description="Quantidade do produto no pedido")
     private Integer quantidade;
+    
+    @Schema(description="Valor de venda do produto no pedido")
     private Double valorVenda;
+    
+    @Schema(description="Desconto aplicado ao produto no pedido")
     private Double desconto;
     
     public PedidoProdutoDTO() {}

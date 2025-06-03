@@ -2,19 +2,24 @@ package com.example.demo.dto;
 
 import java.util.List;
 
-
 import com.example.demo.model.Produto;
 import com.example.demo.model.WishList;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 
+@Schema(description="DTO para WishList")
 public class WishListDTO {
+    
+    @Schema(description="ID da WishList")
     private Long id;
     
     @NotNull(message = "O clienteId é obrigatório")
+    @Schema(description="ID do cliente associado à WishList")
     private Long clienteId;
     
     @NotNull(message = "Os produtosIDS são obrigatórios")
+    @Schema(description="Lista de IDs de produtos na WishList")
     private List<Long> produtosIds;
 
      public WishListDTO() {

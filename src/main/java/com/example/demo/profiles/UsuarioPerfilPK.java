@@ -7,15 +7,20 @@ import jakarta.persistence.ManyToOne;
 import java.io.Serializable;
 import java.util.Objects;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 @Embeddable
+@Schema(description="Chave primária composta para a associação entre usuário e perfil")
 public class UsuarioPerfilPK implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "id_usuario")
+    @Schema(description="Usuário associado ao perfil")
     private Usuario usuario;
 
     @ManyToOne
     @JoinColumn(name = "id_perfil")
+    @Schema(description="Perfil associado ao usuário")
     private Perfil perfil;
 
     public int hashCode() {

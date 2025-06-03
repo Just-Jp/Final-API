@@ -2,11 +2,20 @@ package com.example.demo.dto;
 
 import com.example.demo.model.HistoricoPreco;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 import java.time.LocalDateTime;
 
+@Schema(description="DTO que representa o histórico de preços de um produto")
 public class HistoricoPrecoDTO {
+    
+    @Schema(description="Nome do produto")
     private String nomeProduto;
+
+    @Schema(description="Preço do produto")
     private Double preco;
+
+    @Schema(description="Data e hora da alteração de preço")
     private LocalDateTime dataAlteracao;
 
     public HistoricoPrecoDTO(String nomeProduto, Double preco, LocalDateTime dataAlteracao) {
