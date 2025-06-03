@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.CupomRequestDTO;
+import com.example.demo.exception.TratamentoException;
 import com.example.demo.model.CupomDesconto;
 import com.example.demo.repository.CupomDescontoRepository;
 
@@ -33,13 +34,15 @@ public class CupomDescontoService {
 	}
 	
 	public CupomDesconto ativarCupom(Long id) {
-		CupomDesconto cupom = cupomDescRepo.findById(id).orElseThrow(() -> new RuntimeException("Cupom não encontrado"));
+		CupomDesconto cupom = cupomDescRepo.findById(id).orElseThrow(
+			() -> new TratamentoException("Cupom não encontrado"));
 		cupom.setAtivo(true);
 		return cupomDescRepo.save(cupom);
 	}
 
 	public CupomDesconto desativarCupom(Long id) {
-		CupomDesconto cupom = cupomDescRepo.findById(id).orElseThrow(() -> new RuntimeException("Cupom não encontrado"));
+		CupomDesconto cupom = cupomDescRepo.findById(id).orElseThrow(
+			() -> new TratamentoException("Cupom não encontrado"));
 		cupom.setAtivo(false);
 		return cupomDescRepo.save(cupom);
 	}

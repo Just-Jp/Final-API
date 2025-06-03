@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.validation.ConstraintViolationException;
 
 @ControllerAdvice
@@ -37,6 +38,17 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
                 LocalDateTime.now(),
                 erros);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(erroResposta);
+    }
+
+    @ExceptionHandler(ExpiredJwtException.class)
+    protected ResponseEntity<Object> handleExpiredJwtException(ExpiredJwtException ex) {
+        ErroResposta erroResposta = new ErroResposta(
+            HttpStatus.UNAUTHORIZED.value(),
+            "Token JWT expirado",
+            LocalDateTime.now(),
+            List.of("O token de autenticação expirou. Faça login novamente.")
+            );
+    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(erroResposta);
     }
 
     @Override
