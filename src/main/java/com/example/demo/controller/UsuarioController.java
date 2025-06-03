@@ -16,18 +16,22 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import com.example.demo.dto.UsuarioDTO;
 import com.example.demo.dto.UsuarioInserirDTO;
 import com.example.demo.service.UsuarioService;
 
 @RestController
 @RequestMapping("/usuarios")
+@Tag(name="usuario", description="Gerenciamento de usuários")
 public class UsuarioController {
 
     @Autowired
     UsuarioService usuarioService;
     
     @GetMapping
+    @Operation(summary="Listar usuários", description="Lista todos os usuários do sistema")
     public ResponseEntity<List<UsuarioDTO>> listar(
             @AuthenticationPrincipal UserDetails details) {
         System.out.println("Login do usuario: " + details.getUsername());
@@ -36,6 +40,7 @@ public class UsuarioController {
     }
     
     @PostMapping
+    @Operation(summary="Inserir usuário", description="Cria um novo usuário no sistema")
     public ResponseEntity<UsuarioDTO> inserir(@RequestBody UsuarioInserirDTO usuInsDTO) {
         UsuarioDTO usuarioDTO = usuarioService.inserir(usuInsDTO);
         URI uri = ServletUriComponentsBuilder
@@ -47,12 +52,14 @@ public class UsuarioController {
     }
     
     @PutMapping("/{id}")
+    @Operation(summary="Atualizar usuário", description="Atualiza os dados de um usuário existente")
     public ResponseEntity<UsuarioDTO> atualizar(@PathVariable Long id, @RequestBody UsuarioInserirDTO usuarioAtualizarDTO) {
         UsuarioDTO usuarioDTO = usuarioService.atualizar(id, usuarioAtualizarDTO);
         return ResponseEntity.ok(usuarioDTO);
     }
 
     @DeleteMapping("/{id}")
+    @Operation(summary="Deletar usuário", description="Deleta os dados de um usuário existente")
     public ResponseEntity<Void> deletar(@PathVariable Long id) {
         UsuarioDTO usuarioDTO = usuarioService.buscar(id);
         if (usuarioDTO != null) {

@@ -12,18 +12,25 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.demo.dto.EnderecoDTO;
 import com.example.demo.service.EnderecoService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
 @RequestMapping("/enderecos")
+@Tag(name="endereco", description="Gerenciamento de endereços")
 public class EnderecoController {
+    
     @Autowired
     private EnderecoService serv;
 
     @GetMapping
+    @Operation(summary="Listar todos os endereços", description="Retorna uma lista de todos os endereços cadastrados")
     public ResponseEntity<List<EnderecoDTO>> listar() {
         return ResponseEntity.ok(serv.listar());
     }
 
     @GetMapping("{cep}")
+    @Operation(summary="Buscar endereço por CEP", description="Retorna os detalhes de um endereço específico pelo CEP")
     public ResponseEntity<EnderecoDTO> buscar(@PathVariable String cep) {
         EnderecoDTO enderecoDTO = serv.buscar(cep);
         if (enderecoDTO == null) {

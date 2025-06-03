@@ -6,16 +6,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 import java.util.List;
 
 @RestController
 @RequestMapping("/historico-precos")
+@Tag(name="historico-preco", description="Gerenciamento de histórico de preços")
 public class HistoricoPrecoController {
 
     @Autowired
     private HistoricoPrecoService historicoPrecoService;
 
     @GetMapping("/{id}")
+    @Operation(summary="Buscar histórico de preços por produto", description="Retorna o histórico de preços de um produto específico pelo ID")
     public ResponseEntity<List<HistoricoPrecoDTO>> buscarHistoricoPorProduto(@PathVariable Long id) {
         List<HistoricoPrecoDTO> historicoDTOs = historicoPrecoService.buscarPorProduto(id);
         return ResponseEntity.ok(historicoDTOs);

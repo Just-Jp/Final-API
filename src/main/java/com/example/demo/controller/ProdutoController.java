@@ -17,32 +17,40 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.demo.dto.ProdutoDTO;
 import com.example.demo.service.ProdutoService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+
 
 @RestController
 @RequestMapping("/produtos")
+@Tag(name="produto", description="Gerenciamento de produtos")
 public class ProdutoController {
 
     @Autowired
     private ProdutoService produtoService;
 
     @PostMapping
+    @Operation(summary="Inserir produto", description="Cria um novo produto no sistema")
     public ResponseEntity<ProdutoDTO> inserir(@Valid @RequestBody ProdutoDTO produtoDTO) {
         ProdutoDTO novoProduto = produtoService.inserir(produtoDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(novoProduto);
     }
 
     @GetMapping
+    @Operation(summary="Listar produtos", description="Lista todos os produtos ativos no sistema")
     public ResponseEntity<List<ProdutoDTO>> listar() {
         return ResponseEntity.ok(produtoService.listarAtivo());
     }
 
     @GetMapping("/completo")
+    @Operation(summary="Listar todos os produtos", description="Lista todos os produtos, incluindo inativos")
     public ResponseEntity<List<ProdutoDTO>> listarCompleto() {
         return ResponseEntity.ok(produtoService.listar());
     }
 
     @GetMapping("/{id}")
+    @Operation(summary="Buscar produto por ID", description="Busca um produto específico pelo seu ID")
     public ResponseEntity<ProdutoDTO> buscar(@PathVariable Long id) {
         ProdutoDTO produto = produtoService.buscar(id);
         if (produto != null) {
@@ -52,6 +60,7 @@ public class ProdutoController {
     }
 
     @PutMapping("/{id}")
+    @Operation(summary="Atualizar produto", description="Atualiza as informações de um produto existente")
     public ResponseEntity<ProdutoDTO> atualizar(@PathVariable Long id, @Valid @RequestBody ProdutoDTO produtoDTO) {
         ProdutoDTO produtoAtualizado = produtoService.atualizar(id, produtoDTO);
         if (produtoAtualizado != null) {
@@ -61,6 +70,7 @@ public class ProdutoController {
     }
 
     @DeleteMapping("/{id}")
+    @Operation(summary="Deletar produto", description="Remove um produto do sistema")
     public ResponseEntity<Void> deletar(@PathVariable Long id) {
         ProdutoDTO produtoDTO = produtoService.buscar(id);
         if (produtoDTO != null) {
@@ -71,12 +81,14 @@ public class ProdutoController {
     }
     
     @PutMapping("/inativar/{id}")
+    @Operation(summary="Inativar produto", description="Marca um produto como inativo no sistema")
     public ResponseEntity<ProdutoDTO> inativar(@PathVariable Long id) {
         ProdutoDTO produtoDTO = produtoService.inativar(id);
         return ResponseEntity.ok(produtoDTO);
     }
     
     @PutMapping("/reativar/{id}")
+    @Operation(summary="Reativar produto", description="Marca um produto como ativo no sistema")
     public ResponseEntity<ProdutoDTO> reativar(@PathVariable Long id) {
         ProdutoDTO produtoDTO = produtoService.reativar(id);
         return ResponseEntity.ok(produtoDTO);

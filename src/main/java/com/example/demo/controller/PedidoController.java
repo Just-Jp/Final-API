@@ -23,10 +23,13 @@ import com.example.demo.model.Pedido;
 import com.example.demo.repository.PedidoRepository;
 import com.example.demo.service.PedidoService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/pedidos")
+@Tag(name="Pedido", description="Gerenciamento de Pedidos")
 public class PedidoController {
 
 	@Autowired
@@ -36,12 +39,14 @@ public class PedidoController {
 	private PedidoRepository pedidoRepository;
 
 	@GetMapping
+	@Operation(summary="Listar pedidos", description="Retorna uma lista de todos os pedidos")
 	public ResponseEntity<List<PedidoDTO>> listar() {
 		List<PedidoDTO> produtos = pedidoService.buscarTodos();
 		return ResponseEntity.ok(produtos);
 	}
 
 	@GetMapping("/{id}")
+	@Operation(summary="Buscar pedido por ID", description="Retorna os detalhes de um pedido específico pelo ID")
 	public ResponseEntity<PedidoDTO> buscar(@PathVariable Long id) {
 		Optional<Pedido> pedidoOpt = pedidoRepository.findById(id);
 		if (pedidoOpt.isPresent()) {
@@ -53,11 +58,13 @@ public class PedidoController {
 
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
+	@Operation(summary="Inserir novo pedido", description="Cria um novo pedido com os dados fornecidos")
 	public PedidoDTO inserir(@RequestBody PedidoDTO pedidoDTO) {
 		return pedidoService.inserir(pedidoDTO);
 	}
 
 	@PutMapping("/{id}")
+	@Operation(summary="Atualizar pedido", description="Atualiza os dados de um pedido existente pelo ID")
 	public ResponseEntity<PedidoDTO> atualizar(@PathVariable Long id, @Valid @RequestBody PedidoDTO pedidoDTO) {
 		PedidoDTO pedidoAtualizado = pedidoService.atualizar(id, pedidoDTO);
 		if (pedidoAtualizado != null) {
@@ -67,6 +74,7 @@ public class PedidoController {
 	}
 
 	@DeleteMapping("/{id}")
+	@Operation(summary="Deletar pedido", description="Remove um pedido existente pelo ID")
 	public ResponseEntity<Void> deletar(@PathVariable Long id) {
 		boolean pedidoExist = pedidoRepository.existsById(id);
 		if (pedidoExist) {
@@ -77,6 +85,7 @@ public class PedidoController {
 	}
 
 	@GetMapping("/{id}/nota-fiscal")
+	@Operation(summary="Gerar nota fiscal", description="Gera uma nota fiscal em PDF para o pedido especificado pelo ID")
 	public ResponseEntity<byte[]> gerarNotaFiscal(@PathVariable Long id) throws Exception {
 		byte[] pdfBytes = pedidoService.gerarNotaFiscalJson(id);
 		HttpHeaders headers = new HttpHeaders();
@@ -86,6 +95,7 @@ public class PedidoController {
 	}
 
 	@PostMapping("/{id}/nota-fiscal")
+	@Operation(summary="Gerar nota fiscal local", description="Gera uma nota fiscal em PDF e salva localmente para o pedido especificado pelo ID")
 	public ResponseEntity<String> gerarNotaFiscalLocal(@PathVariable Long id) throws Exception {
 		String caminho = pedidoService.gerarNotaFiscalLocal(id);
 		return ResponseEntity.ok("Nota fiscal gerada em: " + caminho);
