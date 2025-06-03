@@ -18,7 +18,7 @@ public class CategoriaService {
 	private CategoriaRepository repository;
 
 	public CategoriaDTO salvar(CategoriaDTO dto) {
-		if (repository.findByNome(dto.getNome()).isPresent()) {
+		if (repository.findByNomeIgnoreCase(dto.getNome()).isPresent()) {
 			throw new TratamentoException("Já existe uma categoria com esse nome.");
 		}
 		Categoria categoria = new Categoria();
@@ -31,7 +31,7 @@ public class CategoriaService {
 	public CategoriaDTO atualizar(Long id, CategoriaDTO dto) {
         Categoria categoria = repository.findById(id)
             	.orElseThrow(() -> new TratamentoException("Categoria não encontrada para atualização"));
-        if (repository.findByNome(dto.getNome()).isPresent()) {
+        if (repository.findByNomeIgnoreCase(dto.getNome()).isPresent()) {
             throw new TratamentoException("Já existe uma categoria com esse nome.");
         }
         categoria.setNome(dto.getNome());
@@ -53,7 +53,7 @@ public class CategoriaService {
     }
 
 	public CategoriaDTO buscarPorNome(String nome) {
-        Categoria categoria = repository.findByNome(nome)
+        Categoria categoria = repository.findByNomeIgnoreCase(nome)
             .orElseThrow(() -> new TratamentoException("Categoria não encontrada"));
         return toDTO(categoria);
     }

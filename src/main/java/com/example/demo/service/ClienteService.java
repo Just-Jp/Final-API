@@ -20,6 +20,8 @@ import com.example.demo.profiles.Perfil;
 import com.example.demo.repository.ClienteRepository;
 import com.example.demo.security.JwtUtil;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class ClienteService {
 
@@ -74,12 +76,16 @@ public class ClienteService {
             throw new TratamentoException("Email já cadastrado: " + clienteDTO.getEmail());
         }
 
-        Optional<Cliente> clienteNome = repo.findByNome(clienteDTO.getNome());
+        Optional<Cliente> clienteNome = repo.findByNomeIgnoreCase(clienteDTO.getNome());
         if (clienteNome.isPresent() && !clienteNome.get().getId().equals(id)) {
             throw new TratamentoException("Nome já cadastrado: " + clienteDTO.getNome());
         }
 
         return repo.findById(id).map(cli -> {
+            if (!cli.getEmail().equals(clienteDTO.getEmail())) {
+                usuarioService.atualizarEmail(cli.getEmail(), clienteDTO.getEmail());
+            }
+
             Endereco endereco = endServ.buscarCep(clienteDTO.getCep());
             if (endereco == null) {
                 endServ.buscar(clienteDTO.getCep());
@@ -97,6 +103,7 @@ public class ClienteService {
         }).orElse(null);
     }
 
+    @Transactional
     public ClienteDTO inserir(ClienteInserirDTO clienteInserirDTO) throws RuntimeException {
         // Checando por exceptions
         Optional<Cliente> cliente = repo.findByCpf(clienteInserirDTO.getCpf());
@@ -142,12 +149,12 @@ public class ClienteService {
 
     public void deletar(Long id) {
         Cliente cliente = repo.findById(id).orElse(null);
-        JwtUtil.validarAcessoCliente(cliente.getEmail());
-        if (repo.existsById(id)) {
-            repo.deleteById(id);
-        } else {
+        if (cliente == null) {
             throw new TratamentoException("Cliente não encontrado para exclusão");
         }
+        JwtUtil.validarAcessoCliente(cliente.getEmail());
+        usuarioService.deletarPorEmail(cliente.getEmail());
+        repo.deleteById(id);
     }
 
     public Cliente buscarCpf(String cpf) {

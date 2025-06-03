@@ -11,4 +11,5 @@ import java.util.List;
 public interface HistoricoPrecoRepository extends JpaRepository<HistoricoPreco, Long> {
 
     List<HistoricoPreco> findByProdutoOrderByDataAlteracaoDesc(Produto produto);
+    void deleteAllByProdutoId(Long produtoId);
 }

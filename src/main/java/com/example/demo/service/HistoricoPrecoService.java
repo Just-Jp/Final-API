@@ -15,6 +15,7 @@ import com.example.demo.repository.HistoricoPrecoRepository;
 import com.example.demo.repository.ProdutoRepository;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 
 @Service
 public class HistoricoPrecoService {
@@ -46,5 +47,10 @@ public class HistoricoPrecoService {
         return historicos.stream()
                 .map(HistoricoPrecoDTO::new)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void deletarPorProdutoId(Long produtoId) {
+        historicoPrecoRepository.deleteAllByProdutoId(produtoId);
     }
 }

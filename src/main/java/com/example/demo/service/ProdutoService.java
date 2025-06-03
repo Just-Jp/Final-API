@@ -37,13 +37,18 @@ public class ProdutoService {
         Optional<Produto> produtoOpt = produtoRepository.findById(id);
         if (produtoOpt.isPresent()) {
             return new ProdutoDTO(produtoOpt.get());
+        } else {
+            throw new TratamentoException("Produto não encontrado com o ID: " + id);
         }
-        return null;
     }
 
     public ProdutoDTO inserir(ProdutoDTO produtoDTO) {
+        Optional<Produto> produtoExistente = produtoRepository.findByNomeIgnoreCase(produtoDTO.getNome());
+        if (produtoExistente.isPresent()) {
+            throw new TratamentoException("Ja existe um produto cadastrado com o nome: " + produtoDTO.getNome());
+        }
         Produto produto = toEntity(produtoDTO);
-        categoriaRepository.findByNome(produtoDTO.getCategoria())
+        categoriaRepository.findByNomeIgnoreCase(produtoDTO.getCategoria())
                 .orElseThrow(() -> new TratamentoException("Categoria não encontrada: " + produtoDTO.getCategoria()));
         Produto salvo = produtoRepository.save(produto);
         precoServ.criarHistorico(salvo.getId(), salvo.getPreco());
@@ -55,9 +60,14 @@ public class ProdutoService {
         Optional<Produto> produtoOpt = produtoRepository.findById(id);
         if (produtoOpt.isPresent()) {
             Produto produtoExistente = produtoOpt.get();
+            Optional<Produto> mesmoNome = produtoRepository.findByNomeIgnoreCase(produtoDTO.getNome());
+            if (mesmoNome.isPresent() && !mesmoNome.get().getId().equals(id)) {
+                throw new TratamentoException("Produto já cadastrado com o nome: " + produtoDTO.getNome());
+            }
 
-            Categoria categoria = categoriaRepository.findByNome(produtoDTO.getCategoria())
-                    .orElseThrow(() -> new TratamentoException("Categoria não encontrada: " + produtoDTO.getCategoria()));
+            Categoria categoria = categoriaRepository.findByNomeIgnoreCase(produtoDTO.getCategoria())
+                    .orElseThrow(
+                            () -> new TratamentoException("Categoria não encontrada: " + produtoDTO.getCategoria()));
 
             produtoExistente.setNome(produtoDTO.getNome());
             produtoExistente.setPreco(produtoDTO.getPreco());
@@ -75,6 +85,7 @@ public class ProdutoService {
         if (!produtoRepository.existsById(id)) {
             throw new TratamentoException("Produto não encontrado");
         }
+        precoServ.deletarPorProdutoId(id);
         produtoRepository.deleteById(id);
     }
 
@@ -84,14 +95,14 @@ public class ProdutoService {
         produtoRepository.save(produto);
         return new ProdutoDTO(produto);
     }
-    
+
     public ProdutoDTO reativar(Long id) {
         Produto produto = produtoRepository.findById(id).orElseThrow();
         produto.setAtivo(true);
         produtoRepository.save(produto);
         return new ProdutoDTO(produto);
     }
-    
+
     public List<ProdutoDTO> listarAtivo() {
         List<Produto> produtos = produtoRepository.findByAtivo(true);
         return produtos.stream()
@@ -100,7 +111,7 @@ public class ProdutoService {
     }
 
     public Produto toEntity(ProdutoDTO dto) {
-        Categoria categoria = categoriaRepository.findByNome(dto.getCategoria())
+        Categoria categoria = categoriaRepository.findByNomeIgnoreCase(dto.getCategoria())
                 .orElseThrow(() -> new TratamentoException("Categoria não encontrada: " + dto.getCategoria()));
         return new Produto(dto, categoria, true);
     }

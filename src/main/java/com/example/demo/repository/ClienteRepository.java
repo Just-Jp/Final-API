@@ -9,7 +9,7 @@ import com.example.demo.model.Cliente;
 
 @Repository
 public interface ClienteRepository extends JpaRepository<Cliente, Long> {
-    Optional<Cliente> findByNome(String nome);
+    Optional<Cliente> findByNomeIgnoreCase(String nome);
     Optional<Cliente> findByEmail(String email);
     Optional<Cliente> findByCpf(String cpf);
     Optional<Cliente> findByTelefone(String telefone);

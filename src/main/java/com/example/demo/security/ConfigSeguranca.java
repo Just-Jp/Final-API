@@ -5,6 +5,7 @@ import java.util.Arrays;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -34,12 +35,17 @@ public class ConfigSeguranca {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .httpBasic(Customizer.withDefaults())
                 .authorizeHttpRequests(requests -> {
-                    requests.requestMatchers("/**").hasRole("GERENTE");
-                    requests.requestMatchers("/produtos/**", "/cupons/**", "/enderecos/**", "/categorias/**",
-                            "/fidelidade/**", "/historico-precos/**")
-                            .hasAnyRole("FUNCIONARIO", "GERENTE");
-                    requests.requestMatchers("/pedidos/**", "/clientes/**", "/wishlists/**")
-                            .hasAnyRole("CLIENTE", "FUNCIONARIO", "GERENTE");
+                        requests.requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/webjars/**").permitAll();
+                        requests.requestMatchers(HttpMethod.GET, "/produtos", "/produtos/{id}")
+                                .hasAnyRole("CLIENTE", "FUNCIONARIO", "GERENTE");
+                        requests.requestMatchers("/produtos/**")
+                                .hasAnyRole("FUNCIONARIO", "GERENTE");
+                        requests.requestMatchers("/cupons/**", "/enderecos/**", "/categorias/**",
+                                "/fidelidade/**", "/historico-precos/**")
+                                .hasAnyRole("FUNCIONARIO", "GERENTE");
+                        requests.requestMatchers("/pedidos/**", "/clientes/**", "/wishlists/**")
+                                .hasAnyRole("CLIENTE", "FUNCIONARIO", "GERENTE");
+                        requests.requestMatchers("/**").hasRole("GERENTE");
                 })
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         http.addFilter(new JwtAutenticationFilter(

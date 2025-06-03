@@ -111,7 +111,7 @@ public class PedidoService {
 
 	        // Atualiza os campos básicos
 	        pedido.setCliente(
-	                clienteRepository.findByNome(pedidoDto.getCliente())
+	                clienteRepository.findByNomeIgnoreCase(pedidoDto.getCliente())
 	                        .orElseThrow(
 	                                () -> new TratamentoException(
 	                                        "Cliente não encontrado: " + pedidoDto.getCliente())));
@@ -121,7 +121,7 @@ public class PedidoService {
 	        List<PedidoProduto> itens = new ArrayList<>();
 	        if (pedidoDto.getItens() != null) {
 	            for (PedidoProdutoDTO itemDto : pedidoDto.getItens()) {
-	                Produto produto = produtoRepository.findByNome(itemDto.getProduto())
+	                Produto produto = produtoRepository.findByNomeIgnoreCase(itemDto.getProduto())
 	                        .orElseThrow(
 	                                () -> new TratamentoException("Produto não encontrado: " + itemDto.getProduto()));
 	                PedidoProduto pedidoProduto = new PedidoProduto();
@@ -136,7 +136,8 @@ public class PedidoService {
 	            }
 	        }
 
-	        pedido.setItens(itens);
+	        pedido.getItens().clear();
+			pedido.getItens().addAll(itens);
 	        pedido.setValorTotal(calcularValorTotal(itens));
 
 	        if (pedidoDto.getCupom() != null) {
@@ -155,7 +156,7 @@ public class PedidoService {
 	}
 
 	public Pedido toEntity(PedidoDTO dto) {
-		Cliente cliente = clienteRepository.findByNome(dto.getCliente())
+		Cliente cliente = clienteRepository.findByNomeIgnoreCase(dto.getCliente())
 				.orElseThrow(() -> new TratamentoException("Cliente não encontrado: " + dto.getCliente()));
 
 		Pedido pedido = new Pedido();
@@ -166,7 +167,7 @@ public class PedidoService {
 		List<PedidoProduto> itens = new ArrayList<>();
 		if (dto.getItens() != null) {
 			for (PedidoProdutoDTO itemDto : dto.getItens()) {
-				Produto produto = produtoRepository.findByNome(itemDto.getProduto())
+				Produto produto = produtoRepository.findByNomeIgnoreCase(itemDto.getProduto())
 						.orElseThrow(() -> new TratamentoException("Produto não encontrado: " + itemDto.getProduto()));
 				PedidoProduto pedidoProduto = new PedidoProduto();
 				pedidoProduto.setPedido(pedido);

@@ -39,7 +39,7 @@ public class Pedido {
 
     @Column(nullable = false)
     @Valid
-    @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PedidoProduto> itens;
   
     @NotNull(message = "A data do pedido não pode estar vazia")

@@ -10,6 +10,6 @@ import com.example.demo.model.Produto;
 public interface ProdutoRepository extends JpaRepository<Produto, Long> {
 
 	List<Produto> findByAtivo(boolean ativo);
-  Optional<Produto> findByNome(String nome);
+  Optional<Produto> findByNomeIgnoreCase(String nome);
 
 }

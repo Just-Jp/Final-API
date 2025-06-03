@@ -47,7 +47,7 @@ public class UsuarioService {
         if (!usuarioInserirDTO.getSenha().equals(usuarioInserirDTO.getConfirmaSenha())) {
             throw new TratamentoException("Senha e Confirma Senha não são iguais");
         }
-        if (usuarioRepository.findByEmail(usuarioInserirDTO.getEmail()) != null) {
+        if (usuarioRepository.findByEmail(usuarioInserirDTO.getEmail()).isPresent()) {
             throw new TratamentoException("Email já cadastrado");
         }
 
@@ -103,6 +103,22 @@ public class UsuarioService {
         Usuario usuario = usuarioRepository.findById(id)
             .orElseThrow(() -> new TratamentoException("Usuário não encontrado"));
         usuarioRepository.delete(usuario);
+    }
+
+    @Transactional
+    public void deletarPorEmail(String email) {
+        usuarioRepository.deleteByEmail(email);
+    }
+
+    public void atualizarEmail(String emailAntigo, String emailNovo) {
+    Usuario usuario = usuarioRepository.findByEmail(emailAntigo)
+        .orElseThrow(() -> new TratamentoException("Usuário não encontrado para atualizar e-mail"));
+    usuario.setEmail(emailNovo);
+    usuarioRepository.save(usuario);
+    }
+
+    public boolean existePorEmail(String email) {
+        return usuarioRepository.findByEmail(email).isPresent();
     }
 
     public UsuarioDTO buscar(Long id) {

@@ -55,7 +55,7 @@ public class CategoriaController {
         return ResponseEntity.created(uri).body(novaCategoria);
     }
 
-    @Operation(summary = "atualizar uma categoria existente")
+    @Operation(summary = "Atualizar uma categoria existente")
     @PutMapping("/{id}")
     public ResponseEntity<CategoriaDTO> atualizar(@PathVariable Long id, @Valid @RequestBody CategoriaDTO dto) {
         CategoriaDTO atualizada = service.atualizar(id, dto);
