@@ -1,3 +1,148 @@
+# 🛒 API E-Commerce – Trabalho Final Serratec
+
+Este repositório contém a implementação de uma **API RESTful para um sistema de E-Commerce**, desenvolvida como **trabalho final da disciplina de API** no programa Serratec. A aplicação foi construída utilizando **Spring Boot**, **Spring Security com JWT**, **JPA/Hibernate**, com funcionalidades como envio de e-mails e geração de notas fiscais em **PDF**.
+
+---
+
+## 📌 Tecnologias Utilizadas
+
+- Java 17+
+- Spring Boot
+- Spring Security (JWT)
+- Spring Data JPA (Hibernate)
+- PostgreSQL
+- Swagger/OpenAPI
+- Biblioteca de PDF (ex: iText)
+- API ViaCEP (para consulta de endereços)
+- Envio de e-mails
+
+---
+
+## 🔐 Segurança
+
+- **Autenticação** via **JWT** (`/login`)
+- **Autorização baseada em perfis**:
+  - `CLIENTE`
+  - `FUNCIONARIO`
+  - `GERENTE`
+- Regras de acesso definidas em:  
+  [`ConfigSeguranca.java`](src/main/java/com/example/demo/security/ConfigSeguranca.java)
+
+---
+
+## 🚀 Como Executar o Projeto
+
+1. **Configure o Banco de Dados** (PostgreSQL):
+
+   Execute os comandos SQL abaixo para inserir os dados iniciais:
+
+   ```sql
+   INSERT INTO usuario(nome, email, senha)
+   VALUES
+   ('Joao da Silva', 'joao@email.com', '$2a$12$d3Uz3Cec1B4NGnyESDdOe.7YuVMoh5TP2SkE3C7lMmUcVrUfm39Sa'), 
+   ('Andre das coves', 'andre@email.com','$2a$12$etoe4PMMqD5KgOoixBY1gOPavOOnp4IASJVPAr9dQXFGM8SiX8ZEu');
+
+   INSERT INTO perfil (nome) VALUES 
+   ('CLIENTE'),
+   ('FUNCIONARIO'),
+   ('GERENTE');
+
+   INSERT INTO usuario_perfil (id_usuario, id_perfil) VALUES
+   ( (SELECT id_usuario FROM usuario WHERE email='joao@email.com'), (SELECT id_perfil FROM perfil WHERE nome='GERENTE') ),
+   ( (SELECT id_usuario FROM usuario WHERE email='joao@email.com'), (SELECT id_perfil FROM perfil WHERE nome='FUNCIONARIO') ),
+   ( (SELECT id_usuario FROM usuario WHERE email='andre@email.com'), (SELECT id_perfil FROM perfil WHERE nome='GERENTE') );
+   ```
+
+2. **Abra o projeto** na sua IDE (IntelliJ, Eclipse, VS Code etc).
+
+3. **Execute a classe `FinalApplication`** para iniciar a aplicação.
+
+4. **Acesse a API**:
+   - API base: `http://localhost:8080/`
+   - Documentação Swagger: `http://localhost:8080/swagger-ui.html`
+
+---
+
+## 📚 Documentação dos Endpoints
+
+A documentação interativa completa está disponível via Swagger. Abaixo está um resumo organizado por entidade. Todos os endpoints estão protegidos conforme o tipo de usuário autenticado:
+
+<details>
+<summary><strong>Autenticação</strong></summary>
+
+- `POST /login` – Retorna um JWT para autenticação.
+
+</details>
+
+<details>
+<summary><strong>Usuários</strong> - <code>/usuarios</code></summary>
+
+- `GET /usuarios`  
+- `POST /usuarios`  
+- `PUT /usuarios/{id}`  
+- `DELETE /usuarios/{id}`  
+- **Acesso:** FUNCIONARIO, GERENTE
+
+</details>
+
+<details>
+<summary><strong>Clientes</strong> - <code>/clientes</code></summary>
+
+- `GET /clientes`  
+- `GET /clientes/{id}`  
+- `GET /clientes/cpf/{cpf}`  
+- `POST /clientes`  
+- `PUT /clientes/{id}`  
+- `DELETE /clientes/{id}`  
+- **Acesso:** CLIENTE (apenas o próprio), FUNCIONARIO, GERENTE
+
+</details>
+
+<details>
+<summary><strong>Produtos</strong> - <code>/produtos</code></summary>
+
+- `GET /produtos`  
+- `GET /produtos/completo`  
+- `GET /produtos/{id}`  
+- `POST /produtos`  
+- `PUT /produtos/{id}`  
+- `DELETE /produtos/{id}`  
+- `PUT /produtos/inativar/{id}`  
+- `PUT /produtos/reativar/{id}`  
+- **Acesso:** CLIENTE, FUNCIONARIO, GERENTE
+
+</details>
+
+<details>
+<summary><strong>Categorias</strong> - <code>/categorias</code></summary>
+
+- `GET /categorias`  
+- `GET /categorias/{id}`  
+- `POST /categorias`  
+- `PUT /categorias/{id}`  
+- `DELETE /categorias/{id}`  
+- **Acesso:** FUNCIONARIO, GERENTE
+
+</details>
+
+<details>
+<summary><strong>Endereços</strong> - <code>/enderecos</code></summary>
+
+- `GET /enderecos`  
+- `GET /enderecos/{cep}`  
+- **Acesso:** FUNCIONARIO, GERENTE
+
+</details>
+
+<details>
+<summary><strong>Pedidos</strong> - <code>/pedidos</code></summary>
+
+- `GET /pedidos`  
+- `GET /pedidos/{id}`  
+- `POST /pedidos`  
+- `PUT /pedidos/{id}`  
+- `DELETE /pedidos/{id}`  
+- `GET /pedidos/{id}/nota-fiscal`  
 - `POST /pedidos/{id}/nota-fiscal`  
 - **Acesso:** CLIENTE (apenas o próprio), FUNCIONARIO, GERENTE
 
