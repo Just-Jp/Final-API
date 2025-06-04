@@ -35,17 +35,24 @@ public class ConfigSeguranca {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .httpBasic(Customizer.withDefaults())
                 .authorizeHttpRequests(requests -> {
-                        requests.requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/webjars/**").permitAll();
-                        requests.requestMatchers(HttpMethod.GET, "/produtos", "/produtos/{id}")
-                                .hasAnyRole("CLIENTE", "FUNCIONARIO", "GERENTE");
-                        requests.requestMatchers("/produtos/**")
-                                .hasAnyRole("FUNCIONARIO", "GERENTE");
-                        requests.requestMatchers("/cupons/**", "/enderecos/**", "/categorias/**",
-                                "/fidelidade/**", "/historico-precos/**")
-                                .hasAnyRole("FUNCIONARIO", "GERENTE");
-                        requests.requestMatchers("/pedidos/**", "/clientes/**", "/wishlists/**")
-                                .hasAnyRole("CLIENTE", "FUNCIONARIO", "GERENTE");
-                        requests.requestMatchers("/**").hasRole("GERENTE");
+                    requests.requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/webjars/**").permitAll();
+
+                    requests.requestMatchers(HttpMethod.GET, "/produtos", "/produtos/{id}")
+                            .hasAnyRole("CLIENTE", "FUNCIONARIO", "GERENTE");
+                    requests.requestMatchers(HttpMethod.GET, "/clientes/{id}")
+                            .hasAnyRole("CLIENTE", "FUNCIONARIO", "GERENTE");
+                            
+                    requests.requestMatchers("/produtos/**")
+                            .hasAnyRole("FUNCIONARIO", "GERENTE");
+                    requests.requestMatchers("/clientes/**")
+                            .hasAnyRole("FUNCIONARIO", "GERENTE");
+
+                    requests.requestMatchers("/cupons/**", "/enderecos/**", "/categorias/**",
+                            "/fidelidade/**", "/historico-precos/**")
+                            .hasAnyRole("FUNCIONARIO", "GERENTE");
+                    requests.requestMatchers("/pedidos/**", "/wishlists/**")
+                            .hasAnyRole("CLIENTE", "FUNCIONARIO", "GERENTE");
+                    requests.requestMatchers("/**").hasRole("GERENTE");
                 })
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         http.addFilter(new JwtAutenticationFilter(
